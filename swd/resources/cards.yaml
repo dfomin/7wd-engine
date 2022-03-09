@@ -1,0 +1,614 @@
+- id: 0
+  name: Lumber yard
+  color: brown
+  price: null
+  effect:
+    wood: 1
+- id: 1
+  name: Logging camp
+  color: brown
+  price:
+    coins: 1
+  effect:
+    wood: 1
+- id: 2
+  name: Clay pool
+  color: brown
+  price: null
+  effect:
+    clay: 1
+- id: 3
+  name: Clay pit
+  color: brown
+  price:
+    coins: 1
+  effect:
+    clay: 1
+- id: 4
+  name: Quarry
+  color: brown
+  price: null
+  effect:
+    stone: 1
+- id: 5
+  name: Stone pit
+  color: brown
+  price:
+    coins: 1
+  effect:
+    stone: 1
+- id: 6
+  name: Glassworks
+  color: gray
+  price:
+    coins: 1
+  effect:
+    glass: 1
+- id: 7
+  name: Press
+  color: gray
+  price:
+    coins: 1
+  effect:
+    paper: 1
+- id: 8
+  name: Guard tower
+  color: red
+  price: null
+  effect:
+    shield: 1
+- id: 9
+  name: Stable
+  color: red
+  price:
+    wood: 1
+  effect:
+    shield: 1
+  chain_out: horseshoe
+- id: 10
+  name: Garrison
+  color: red
+  price:
+    clay: 1
+  effect:
+    shield: 1
+  chain_out: sword
+- id: 11
+  name: Palisade
+  color: red
+  price:
+    coins: 2
+  effect:
+    shield: 1
+  chain_out: tower
+- id: 12
+  name: Workshop
+  color: green
+  price:
+    paper: 1
+  effect:
+    points: 1
+  scientific_symbol: plumb
+- id: 13
+  name: Apothecary
+  color: green
+  price:
+    glass: 1
+  effect:
+    points: 1
+  scientific_symbol: wheel
+- id: 14
+  name: Scriptorium
+  color: green
+  price:
+    coins: 2
+  effect: null
+  scientific_symbol: feather
+  chain_out: book
+- id: 15
+  name: Pharmacist
+  color: green
+  price:
+    coins: 2
+  effect: null
+  scientific_symbol: mortar_and_pestle
+  chain_out: gear
+- id: 16
+  name: Theater
+  color: blue
+  price: null
+  effect:
+    points: 3
+  chain_out: mask
+- id: 17
+  name: Altar
+  color: blue
+  price: null
+  effect:
+    points: 3
+  chain_out: moon
+- id: 18
+  name: Baths
+  color: blue
+  price:
+    stone: 1
+  effect:
+    points: 3
+  chain_out: drop
+- id: 19
+  name: Stone reserve
+  color: yellow
+  price:
+    coins: 3
+  effect:
+    stone_trade: 1
+- id: 20
+  name: Clay reserve
+  color: yellow
+  price:
+    coins: 3
+  effect:
+    clay_trade: 1
+- id: 21
+  name: Wood reserve
+  color: yellow
+  price:
+    coins: 3
+  effect:
+    wood_trade: 1
+- id: 22
+  name: Tavern
+  color: yellow
+  price: null
+  effect:
+    coins: 4
+  chain_out: vase
+- id: 23
+  name: Sawmill
+  color: brown
+  price:
+    coins: 2
+  effect:
+    wood: 2
+- id: 24
+  name: Brickyard
+  color: brown
+  price:
+    coins: 2
+  effect:
+    clay: 2
+- id: 25
+  name: Shelf quarry
+  color: brown
+  price:
+    coins: 2
+  effect:
+    stone: 2
+- id: 26
+  name: Glassblower
+  color: gray
+  price: null
+  effect:
+    glass: 1
+- id: 27
+  name: Drying room
+  color: gray
+  price: null
+  effect:
+    paper: 1
+- id: 28
+  name: Walls
+  color: red
+  price:
+    stone: 2
+  effect:
+    shield: 2
+- id: 29
+  name: Horse breeders
+  color: red
+  price:
+    wood: 1
+    clay: 1
+  effect:
+    shield: 1
+  chain_in: horseshoe
+- id: 30
+  name: Barracks
+  color: red
+  price:
+    coins: 3
+  effect:
+    shield: 1
+  chain_in: sword
+- id: 31
+  name: Archery rance
+  color: red
+  price:
+    wood: 1
+    stone: 1
+    paper: 1
+  effect:
+    shield: 2
+  chain_out: target
+- id: 32
+  name: Parade ground
+  color: red
+  price:
+    clay: 2
+    glass: 1
+  effect:
+    shield: 2
+  chain_out: helmet
+- id: 33
+  name: Library
+  color: green
+  price:
+    wood: 1
+    stone: 1
+    glass: 1
+  effect:
+    points: 2
+  scientific_symbol: feather
+  chain_in: book
+- id: 34
+  name: Dispensary
+  color: green
+  price:
+    clay: 2
+    stone: 1
+  effect:
+    points: 2
+  scientific_symbol: mortar_and_pestle
+  chain_in: gear
+- id: 35
+  name: School
+  color: green
+  price:
+    wood: 1
+    paper: 2
+  effect:
+    points: 1
+  scientific_symbol: wheel
+  chain_out: harp
+- id: 36
+  name: Laboratory
+  color: green
+  price:
+    wood: 1
+    glass: 2
+  effect:
+    points: 1
+  scientific_symbol: plumb
+  chain_out: teapot
+- id: 37
+  name: Courthouse
+  color: blue
+  price:
+    wood: 2
+    glass: 1
+  effect:
+    points: 5
+- id: 38
+  name: Statue
+  color: blue
+  price:
+    clay: 2
+  effect:
+    points: 4
+  chain_in: mask
+  chain_out: column
+- id: 39
+  name: Temple
+  color: blue
+  price:
+    wood: 1
+    paper: 1
+  effect:
+    points: 4
+  chain_in: moon
+  chain_out: sun
+- id: 40
+  name: Aqueduct
+  color: blue
+  price:
+    stone: 3
+  effect:
+    points: 5
+  chain_in: drop
+- id: 41
+  name: Rostrum
+  color: blue
+  price:
+    wood: 1
+    stone: 1
+  effect:
+    points: 4
+  chain_out: temple
+- id: 42
+  name: Forum
+  color: yellow
+  price:
+    coins: 3
+    clay: 1
+  effect:
+    goods: 1
+- id: 43
+  name: Caravansery
+  color: yellow
+  price:
+    coins: 2
+    glass: 1
+    paper: 1
+  effect:
+    materials: 1
+- id: 44
+  name: Customs house
+  color: yellow
+  price:
+    coins: 4
+  effect:
+    glass_trade: 1
+    paper_trade: 1
+- id: 45
+  name: Brewery
+  color: yellow
+  price: null
+  effect:
+    coins: 6
+  chain_out: barrel
+- id: 46
+  name: Arsenal
+  color: red
+  price:
+    wood: 2
+    clay: 3
+  effect:
+    shield: 3
+- id: 47
+  name: Pretorium
+  color: red
+  price:
+    coins: 8
+  effect:
+    shield: 3
+- id: 48
+  name: Fortifications
+  color: red
+  price:
+    clay: 1
+    stone: 2
+    paper: 1
+  effect:
+    shield: 2
+  chain_in: tower
+- id: 49
+  name: Siege workshop
+  color: red
+  price:
+    wood: 3
+    glass: 1
+  effect:
+    shield: 2
+  chain_in: target
+- id: 50
+  name: Circus
+  color: red
+  price:
+    clay: 2
+    stone: 2
+  effect:
+    shield: 2
+  chain_in: helmet
+- id: 51
+  name: Academy
+  color: green
+  price:
+    wood: 1
+    stone: 1
+    glass: 2
+  effect:
+    points: 3
+  scientific_symbol: sundial
+- id: 52
+  name: Study
+  color: green
+  price:
+    wood: 2
+    glass: 1
+    paper: 1
+  effect:
+    points: 3
+  scientific_symbol: sundial
+- id: 53
+  name: University
+  color: green
+  price:
+    clay: 1
+    glass: 1
+    paper: 1
+  effect:
+    points: 2
+  scientific_symbol: armillary_sphere
+  chain_in: harp
+- id: 54
+  name: Observatory
+  color: green
+  price:
+    stone: 1
+    paper: 2
+  effect:
+    points: 2
+  scientific_symbol: armillary_sphere
+  chain_in: teapot
+- id: 55
+  name: Palace
+  color: blue
+  price:
+    wood: 1
+    clay: 1
+    stone: 1
+    glass: 2
+  effect:
+    points: 7
+- id: 56
+  name: Town hall
+  color: blue
+  price:
+    wood: 2
+    stone: 3
+  effect:
+    points: 7
+- id: 57
+  name: Obelisk
+  color: blue
+  price:
+    stone: 2
+    glass: 1
+  effect:
+    points: 5
+- id: 58
+  name: Gardens
+  color: blue
+  price:
+    wood: 2
+    clay: 2
+  effect:
+    points: 6
+  chain_in: column
+- id: 59
+  name: Pantheon
+  color: blue
+  price:
+    wood: 1
+    clay: 1
+    paper: 2
+  effect:
+    points: 6
+  chain_in: sun
+- id: 60
+  name: Senate
+  color: blue
+  price:
+    clay: 2
+    stone: 1
+    paper: 1
+  effect:
+    points: 5
+  chain_in: temple
+- id: 61
+  name: Chamber of commerce
+  color: yellow
+  price:
+    paper: 2
+  effect:
+    points: 3
+    gray_coins: 3
+- id: 62
+  name: Port
+  color: yellow
+  price:
+    wood: 1
+    glass: 1
+    paper: 1
+  effect:
+    points: 3
+    brown_coins: 2
+- id: 63
+  name: Armory
+  color: yellow
+  price:
+    stone: 2
+    glass: 1
+  effect:
+    points: 3
+    red_coins: 1
+- id: 64
+  name: Lighthouse
+  color: yellow
+  price:
+    clay: 2
+    glass: 1
+  effect:
+    points: 3
+    yellow_coins: 1
+  chain_in: vase
+- id: 65
+  name: Arena
+  color: yellow
+  price:
+    wood: 1
+    clay: 1
+    stone: 1
+  effect:
+    points: 3
+    wonder_coins: 2
+  chain_in: barrel
+- id: 66
+  name: Merchants guild
+  color: purple
+  price:
+    wood: 1
+    clay: 1
+    glass: 1
+    paper: 1
+  effect:
+    yellow_max_points: 1
+    yellow_max_coins: 1
+- id: 67
+  name: Shipowners guild
+  color: purple
+  price:
+    clay: 1
+    stone: 1
+    glass: 1
+    paper: 1
+  effect:
+    brown_gray_max_points: 1
+    brown_gray_max_coins: 1
+- id: 68
+  name: Builders guild
+  color: purple
+  price:
+    wood: 1
+    clay: 1
+    stone: 2
+    glass: 1
+  effect:
+    wonder_max_points: 2
+- id: 69
+  name: Magistrates guild
+  color: purple
+  price:
+    wood: 2
+    clay: 1
+    paper: 1
+  effect:
+    blue_max_points: 1
+    blue_max_coins: 1
+- id: 70
+  name: Scientists guild
+  color: purple
+  price:
+    wood: 2
+    clay: 2
+  effect:
+    green_max_points: 1
+    green_max_coins: 1
+- id: 71
+  name: Moneylenders guild
+  color: purple
+  price:
+    wood: 2
+    stone: 2
+  effect:
+    coins_max_points: 1
+- id: 72
+  name: Tacticians guild
+  color: purple
+  price:
+    clay: 1
+    stone: 2
+    paper: 1
+  effect:
+    red_max_points: 1
+    red_max_coins: 1

@@ -1,0 +1,113 @@
+- id: 0
+  name: The Appian Way
+  price:
+    clay: 2
+    stone: 2
+    paper: 1
+  effect:
+    coins: 3
+    opponent_coins: -3
+    double_turn: 1
+    points: 3
+- id: 1
+  name: Circum Maximus
+  price:
+    wood: 1
+    stone: 2
+    glass: 1
+  effect:
+    destroy_gray: 1
+    shield: 1
+    points: 3
+- id: 2
+  name: The Colossus
+  price:
+    clay: 3
+    glass: 1
+  effect:
+    shield: 2
+    points: 3
+- id: 3
+  name: The Great Library
+  price:
+    wood: 3
+    glass: 1
+    paper: 1
+  effect:
+    select_progress_token: 1
+    points: 4
+- id: 4
+  name: The Great Lighthouse
+  price:
+    wood: 1
+    stone: 1
+    paper: 2
+  effect:
+    materials: 1
+    points: 4
+- id: 5
+  name: The Hanging Gardens
+  price:
+    wood: 2
+    glass: 1
+    paper: 1
+  effect:
+    coins: 6
+    double_turn: 1
+    points: 3
+- id: 6
+  name: The Mausoleum
+  price:
+    clay: 2
+    glass: 2
+    paper: 1
+  effect:
+    select_discarded: 1
+    points: 2
+- id: 7
+  name: Piraeus
+  price:
+    wood: 2
+    clay: 1
+    stone: 1
+  effect:
+    goods: 1
+    double_turn: 1
+    points: 2
+- id: 8
+  name: The Pyramids
+  price:
+    stone: 3
+    paper: 1
+  effect:
+    points: 9
+- id: 9
+  name: The Sphinx
+  price:
+    clay: 1
+    stone: 1
+    glass: 2
+  effect:
+    double_turn: 1
+    points: 6
+- id: 10
+  name: The Statue of Zeus
+  price:
+    wood: 1
+    clay: 1
+    stone: 1
+    paper: 2
+  effect:
+    destroy_brown: 1
+    shield: 1
+    points: 3
+- id: 11
+  name: The Temple of Artemis
+  price:
+    wood: 1
+    stone: 1
+    glass: 1
+    paper: 1
+  effect:
+    coins: 12
+    double_turn: 1
