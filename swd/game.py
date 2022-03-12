@@ -45,7 +45,7 @@ class Game:
                          {})
 
     @staticmethod
-    def print(state: GameState):
+    def print(state: GameState) -> str:
         result = ""
         for player_state in state.players_state:
             result += f"{player_state.coins} {Player.resources(player_state)} {Game.points(state, player_state.index)[0]}\n"
