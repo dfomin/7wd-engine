@@ -139,7 +139,7 @@ class CardsBoard:
         index = np.where(state.card_places == card_id)
         if len(index[0]) != 1 or len(index[1]) != 1:
             raise ValueError
-        pos: Tuple[int, int] = index[0][0], index[1][0]
+        pos = index[0][0], index[1][0]
         state.card_places[pos] = NO_CARD
         if pos[0] > 0:
             card_up_pos = pos[0] - 1, pos[1]
