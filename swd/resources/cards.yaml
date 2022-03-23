@@ -221,7 +221,7 @@
     shield: 1
   chain_in: sword
 - id: 31
-  name: Archery rance
+  name: Archery range
   color: red
   price:
     wood: 1
