@@ -11,7 +11,7 @@ class Agent(ABC):
     def choose_action(self, state: GameState, possible_actions: Sequence[Action]) -> Action:
         raise NotImplementedError
 
-    def on_action_applied(self, old_state: GameState, action: Action, new_state: GameState):
+    def on_action_applied(self, action: Action, new_state: GameState):
         pass
 
 
