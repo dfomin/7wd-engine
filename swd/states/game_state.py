@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Any, Dict, Tuple
+
+import numpy as np
 
 from .cards_board_state import CardsBoardState
 from .military_state_track import MilitaryTrackState
@@ -34,6 +36,7 @@ class GameState:
     winner: Optional[int]
     cards_board_state: CardsBoardState
     meta_info: Dict[str, Any]
+    price_cache: Optional[Dict[int, Dict[int, int]]] = None
 
     def clone(self) -> 'GameState':
         return GameState(self.age,

@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -10,7 +10,8 @@ from .cards import Card
 from .cards_board import CardsBoard
 from .military_track import MilitaryTrack
 from .player import Player
-from .bonuses import ImmediateBonus, POINTS_BONUS_RANGE, POINTS_BONUS, BONUSES
+from .bonuses import ImmediateBonus, POINTS_BONUS_RANGE, POINTS_BONUS, BONUSES, PLAYER_INVALIDATE_CACHE_RANGE, \
+    OPPONENT_INVALIDATE_CACHE_RANGE
 from .states.cards_board_state import CardsBoardState
 from .states.game_state import GameState, GameStatus
 from .states.military_state_track import MilitaryTrackState
@@ -133,17 +134,18 @@ class Game:
     @staticmethod
     def available_normal_actions(state: GameState) -> List[Action]:
         player_state = state.players_state[state.current_player_index]
-        opponent_state = state.players_state[1 - state.current_player_index]
         result: List[Action] = []
         cards = [(EntityManager.card(x[0]), x[1]) for x in CardsBoard.available_cards(state.cards_board_state)]
         result.extend([DiscardCardAction(x[0].id, x[1]) for x in cards])
         for card, pos in cards:
-            if Player.card_price(player_state, card, opponent_state) <= player_state.coins:
+            price = Game.card_price(state, card, state.current_player_index)
+            if price <= player_state.coins:
                 result.append(BuyCardAction(card.id, pos))
 
         wonders_to_build = [EntityManager.wonder(x[0]) for x in player_state.wonders if x[1] is None]
         for wonder in wonders_to_build:
-            if Player.wonder_price(player_state, wonder, opponent_state) > player_state.coins:
+            price = Game.wonder_price(state, wonder, state.current_player_index)
+            if price > player_state.coins:
                 continue
             for card, pos in cards:
                 result.append(BuildWonderAction(wonder.id, card.id, pos))
@@ -163,6 +165,7 @@ class Game:
         elif isinstance(action, DestroyCardAction):
             Player.destroy_card(state.players_state[1 - state.current_player_index], action.card_id)
             state.discard_pile.append(action.card_id)
+            Game.check_cache(state, EntityManager.card(action.card_id).bonuses, 1 - state.current_player_index)
             state.game_status = GameStatus.NORMAL_TURN
         elif isinstance(action, PickWonderAction):
             if len(state.wonders) > 4:
@@ -179,7 +182,7 @@ class Game:
             CardsBoard.take_card(state.cards_board_state, action.card_id)
             if player_state.bonuses[BONUSES.index("theology")] > 0:
                 state.is_double_turn = True
-            Game.build_wonder(state, player_state.index, action.wonder_id, action.card_id)
+            Game.build_wonder(state, action.wonder_id, action.card_id)
         elif isinstance(action, PickStartPlayerAction):
             state.current_player_index = 1 - action.player_index        # will be changed to opposite later
             state.game_status = GameStatus.NORMAL_TURN
@@ -193,6 +196,7 @@ class Game:
                 state.rest_progress_tokens.remove(action.progress_token)
             else:
                 raise ValueError
+            Game.check_cache(state, token.bonuses, state.current_player_index)
             state.game_status = GameStatus.NORMAL_TURN
         elif isinstance(action, PickDiscardedCardAction):
             Game.add_card(state, player_state, EntityManager.card(action.card_id))
@@ -217,6 +221,8 @@ class Game:
                 if MilitaryTrack.weaker_player(state.military_track_state) is not None:
                     state.current_player_index = MilitaryTrack.weaker_player(state.military_track_state)
                     state.game_status = GameStatus.PICK_START_PLAYER
+                # else:
+                #     state.game_status = GameStatus.PICK_START_PLAYER
             else:
                 if not state.is_double_turn:
                     state.current_player_index = 1 - state.current_player_index
@@ -274,7 +280,8 @@ class Game:
     def buy_card(state: GameState, card: Card):
         player_state = state.players_state[state.current_player_index]
         opponent_state = state.players_state[1 - state.current_player_index]
-        price = Player.card_price(player_state, card, opponent_state)
+
+        price = Game.card_price(state, card, state.current_player_index)
         if price > player_state.coins:
             raise ValueError
         player_state.coins -= price
@@ -291,24 +298,28 @@ class Game:
             if len(state.progress_tokens) > 0:
                 state.game_status = GameStatus.PICK_PROGRESS_TOKEN
 
+        Game.check_cache(state, card.bonuses, state.current_player_index)
+
     @staticmethod
-    def build_wonder(state: GameState, player_index: int, wonder_id: int, card_id: int):
-        player_state = state.players_state[player_index]
-        opponent_state = state.players_state[1 - player_index]
+    def build_wonder(state: GameState, wonder_id: int, card_id: int):
+        player_state = state.players_state[state.current_player_index]
+        opponent_state = state.players_state[1 - state.current_player_index]
         wonder: Wonder = EntityManager.wonder(wonder_id)
-        price = Player.wonder_price(player_state, wonder, opponent_state)
+        price = Game.wonder_price(state, wonder, state.current_player_index)
         if price > player_state.coins:
             raise ValueError
         player_state.coins -= price
         if opponent_state.bonuses[BONUSES.index("economy")] > 0:
             opponent_state.coins += (price - wonder.price.coins)
         Player.build_wonder(player_state, wonder_id, card_id)
-        Game.apply_immediate_bonus(state, player_index, wonder.immediate_bonus, False)
+        Game.apply_immediate_bonus(state, state.current_player_index, wonder.immediate_bonus, False)
 
         if len([x for x in player_state.wonders if x[1] is not None]) + \
                 len([x for x in opponent_state.wonders if x[1] is not None]) == 7:
             Player.remove_unbuilt_wonders(player_state)
             Player.remove_unbuilt_wonders(opponent_state)
+
+        Game.check_cache(state, wonder.bonuses, state.current_player_index)
 
     @staticmethod
     def apply_immediate_bonus(state: GameState, player_index: int, immediate_bonus: Dict[ImmediateBonus, int],
@@ -362,3 +373,47 @@ class Game:
             elif bonus == ImmediateBonus.SELECT_DISCARDED:
                 if len(state.discard_pile) > 0:
                     state.game_status = GameStatus.SELECT_DISCARDED
+
+    @staticmethod
+    def card_price(state: GameState, card: Card, player_index: int) -> int:
+        player_state = state.players_state[player_index]
+        opponent_state = state.players_state[1 - player_index]
+
+        price = None
+        if state.price_cache is not None:
+            price = state.price_cache.get(player_index, {}).get(card.id, None)
+        if price is None:
+            price = Player.card_price(player_state, card, opponent_state)
+            if state.price_cache is not None:
+                if player_index not in state.price_cache:
+                    state.price_cache[player_index] = {}
+                state.price_cache[player_index][card.id] = price
+
+        return price
+
+    @staticmethod
+    def wonder_price(state: GameState, wonder: Wonder, player_index: int) -> int:
+        player_state = state.players_state[player_index]
+        opponent_state = state.players_state[1 - player_index]
+
+        price = None
+        if state.price_cache is not None:
+            price = state.price_cache.get(player_index, {}).get(EntityManager.cards_count() + wonder.id, None)
+        if price is None:
+            price = Player.wonder_price(player_state, wonder, opponent_state)
+            if state.price_cache is not None:
+                if player_index not in state.price_cache:
+                    state.price_cache[player_index] = {}
+                state.price_cache[player_index][EntityManager.cards_count() + wonder.id] = price
+
+        return price
+
+    @staticmethod
+    def check_cache(state: GameState, bonuses: np.ndarray, player_index: int):
+        if state.price_cache is None:
+            return
+
+        if np.count_nonzero(bonuses[PLAYER_INVALIDATE_CACHE_RANGE]) > 0:
+            state.price_cache[player_index] = {}
+        if np.count_nonzero(bonuses[OPPONENT_INVALIDATE_CACHE_RANGE]) > 0:
+            state.price_cache[1 - player_index] = {}
