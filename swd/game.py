@@ -106,7 +106,6 @@ class Game:
         elif state.game_status == GameStatus.PICK_PROGRESS_TOKEN:
             available_actions = [PickProgressTokenAction(x) for x in state.progress_tokens]
         elif state.game_status == GameStatus.PICK_REST_PROGRESS_TOKEN:
-            np.random.shuffle(state.rest_progress_tokens)
             available_actions = [PickProgressTokenAction(x) for x in state.rest_progress_tokens[:3]]
         elif state.game_status == GameStatus.DESTROY_BROWN:
             opponent_state = state.players_state[1 - state.current_player_index]
@@ -369,6 +368,7 @@ class Game:
                 if opponent_state.bonuses[BONUSES.index("gray")] > 0:
                     state.game_status = GameStatus.DESTROY_GRAY
             elif bonus == ImmediateBonus.SELECT_PROGRESS_TOKEN:
+                np.random.shuffle(state.rest_progress_tokens)
                 state.game_status = GameStatus.PICK_REST_PROGRESS_TOKEN
             elif bonus == ImmediateBonus.SELECT_DISCARDED:
                 if len(state.discard_pile) > 0:
