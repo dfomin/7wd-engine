@@ -93,8 +93,6 @@ class Game:
         available_actions = []
 
         if state.game_status == GameStatus.PICK_WONDER:
-            player_index = [0, 1, 1, 0, 1, 0, 0, 1][8 - len(state.wonders)]
-            state.current_player_index = player_index
             if len(state.wonders) > 4:
                 available_actions = [PickWonderAction(x) for x in state.wonders[:-4]]
             else:
@@ -177,6 +175,10 @@ class Game:
             state.wonders.remove(action.wonder_id)
             if len(state.wonders) == 0:
                 state.game_status = GameStatus.NORMAL_TURN
+                state.current_player_index = 0
+            else:
+                player_index = [0, 1, 1, 0, 1, 0, 0, 1][8 - len(state.wonders)]
+                state.current_player_index = player_index
         elif isinstance(action, BuildWonderAction):
             CardsBoard.take_card(state.cards_board_state, action.card_id)
             if player_state.bonuses[BONUSES.index("theology")] > 0:
