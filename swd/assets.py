@@ -25,9 +25,15 @@ class Assets:
         assets[1][3:] = 6
         assets[2] = 7
 
+        checks_count = 1
+        if self.resources[7] > 0:
+            checks_count = 3
+        elif self.resources[5] > 0 or self.resources[6] > 0:
+            checks_count = 2
+
         most_expensive_indices = (-self.resources_cost).argsort()
         for index in most_expensive_indices:
-            for i in range(3):
+            for i in range(checks_count):
                 amount = min(price_resources[index], self.resources[assets[i, index]])
                 price_resources[index] -= amount
                 self.resources[assets[i, index]] -= amount

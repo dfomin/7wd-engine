@@ -124,7 +124,8 @@ class CardsBoard:
     @staticmethod
     def available_cards(state: CardsBoardState) -> List[Tuple[int, Tuple[int, int]]]:
         result = []
-        for pos in np.transpose(np.where(state.card_places >= 0)):
+        places = np.where(state.card_places >= 0)
+        for pos in zip(places[0], places[1]):
             is_last_row = pos[0] == state.card_places.shape[0] - 1
             is_last_column = pos[1] == state.card_places.shape[1] - 1
             if is_last_row:
