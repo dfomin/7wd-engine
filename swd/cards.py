@@ -7,7 +7,7 @@ from .price import Price
 from .bonuses import CoinsAndResources, ImmediateBonus, RESOURCES, CHAIN_SYMBOLS, BONUSES
 
 
-@dataclass
+@dataclass(slots=True)
 class Card:
     id: int
     name: str

@@ -2,50 +2,50 @@ from dataclasses import dataclass
 from typing import Tuple
 
 
-@dataclass
+@dataclass(slots=True)
 class Action:
     pass
 
 
-@dataclass
+@dataclass(slots=True)
 class BuyCardAction(Action):
     card_id: int
     pos: Tuple[int, int]
 
 
-@dataclass
+@dataclass(slots=True)
 class DiscardCardAction(Action):
     card_id: int
     pos: Tuple[int, int]
 
 
-@dataclass
+@dataclass(slots=True)
 class DestroyCardAction(Action):
     card_id: int
 
 
-@dataclass
+@dataclass(slots=True)
 class PickWonderAction(Action):
     wonder_id: int
 
 
-@dataclass
+@dataclass(slots=True)
 class BuildWonderAction(Action):
     wonder_id: int
     card_id: int
     pos: Tuple[int, int]
 
 
-@dataclass
+@dataclass(slots=True)
 class PickStartPlayerAction(Action):
     player_index: int
 
 
-@dataclass
+@dataclass(slots=True)
 class PickProgressTokenAction(Action):
     progress_token: str
 
 
-@dataclass
+@dataclass(slots=True)
 class PickDiscardedCardAction(Action):
     card_id: int
