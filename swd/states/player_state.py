@@ -6,7 +6,7 @@ import numpy as np
 from ..bonuses import BONUSES
 
 
-@dataclass(slots=True)
+@dataclass
 class PlayerState:
     index: int
     coins: int = 7

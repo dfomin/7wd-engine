@@ -6,7 +6,7 @@ import numpy as np
 from .bonuses import ImmediateBonus, BONUSES
 
 
-@dataclass(slots=True)
+@dataclass
 class ProgressToken:
     name: str
     bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))

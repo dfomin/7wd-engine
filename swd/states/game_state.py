@@ -21,7 +21,7 @@ class GameStatus(Enum):
     FINISHED = auto()
 
 
-@dataclass(slots=True)
+@dataclass
 class GameState:
     age: int
     current_player_index: int

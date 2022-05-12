@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import numpy as np
 
 
-@dataclass(slots=True)
+@dataclass
 class Price:
     coins: int
     resources: np.ndarray

@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 
 
-@dataclass(slots=True)
+@dataclass
 class CardsBoardState:
     age: int
     card_places: np.ndarray

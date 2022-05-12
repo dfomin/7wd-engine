@@ -5,7 +5,7 @@ import numpy as np
 from .price import Price
 
 
-@dataclass(slots=True)
+@dataclass
 class Assets:
     coins: int
     resources: np.ndarray

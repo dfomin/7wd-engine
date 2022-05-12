@@ -7,7 +7,7 @@ from .price import Price
 from .bonuses import CoinsAndResources, ImmediateBonus, RESOURCES, BONUSES
 
 
-@dataclass(slots=True)
+@dataclass
 class Wonder:
     id: int
     name: str
