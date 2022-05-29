@@ -222,8 +222,8 @@ class Game:
                 if MilitaryTrack.weaker_player(state.military_track_state) is not None:
                     state.current_player_index = MilitaryTrack.weaker_player(state.military_track_state)
                     state.game_status = GameStatus.PICK_START_PLAYER
-                # else:
-                #     state.game_status = GameStatus.PICK_START_PLAYER
+                else:
+                    state.game_status = GameStatus.PICK_START_PLAYER
             else:
                 if not state.is_double_turn:
                     state.current_player_index = 1 - state.current_player_index
