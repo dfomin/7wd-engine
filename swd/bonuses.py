@@ -128,7 +128,7 @@ PLAYER_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONU
 OPPONENT_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONUSES[x] in OPPONENT_INVALIDATE_CACHE_BONUSES])
 
 
-class ImmediateBonus(Enum):
+class InstantBonus(Enum):
     COINS = "coins"
     SHIELD = "shield"
     BROWN_COINS = "brown_coins"

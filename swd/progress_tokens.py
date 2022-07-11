@@ -3,14 +3,14 @@ from typing import Dict, Any
 
 import numpy as np
 
-from .bonuses import ImmediateBonus, BONUSES
+from .bonuses import InstantBonus, BONUSES
 
 
 @dataclass
 class ProgressToken:
     name: str
     bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))
-    immediate_bonus: Dict[ImmediateBonus, int] = field(default_factory=dict)
+    instant_bonus: Dict[InstantBonus, int] = field(default_factory=dict)
 
     @property
     def points(self) -> int:
@@ -24,12 +24,12 @@ class ProgressToken:
         bonuses[BONUSES.index("progress_token")] += 1
         if "scientific_symbol" in description:
             bonuses[BONUSES.index(description["scientific_symbol"])] += 1
-        immediate_bonus = {}
+        instant_bonus = {}
         for effect_name, effect in description["effect"].items():
             if effect_name in BONUSES:
                 bonuses[BONUSES.index(effect_name)] = effect
-            elif effect_name in map(lambda x: x.value, ImmediateBonus):
-                immediate_bonus[ImmediateBonus(effect_name)] = effect
+            elif effect_name in map(lambda x: x.value, InstantBonus):
+                instant_bonus[InstantBonus(effect_name)] = effect
         return ProgressToken(description["name"],
                              bonuses,
-                             immediate_bonus)
+                             instant_bonus)
