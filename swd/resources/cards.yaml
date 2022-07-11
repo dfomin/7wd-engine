@@ -64,7 +64,7 @@
     wood: 1
   effect:
     shield: 1
-  chain_out: horseshoe
+    chain_symbol: horseshoe
 - id: 10
   name: Garrison
   color: red
@@ -72,7 +72,7 @@
     clay: 1
   effect:
     shield: 1
-  chain_out: sword
+    chain_symbol: sword
 - id: 11
   name: Palisade
   color: red
@@ -80,7 +80,7 @@
     coins: 2
   effect:
     shield: 1
-  chain_out: tower
+    chain_symbol: tower
 - id: 12
   name: Workshop
   color: green
@@ -88,7 +88,7 @@
     paper: 1
   effect:
     points: 1
-  scientific_symbol: plumb
+    scientific_symbol: plumb
 - id: 13
   name: Apothecary
   color: green
@@ -96,37 +96,37 @@
     glass: 1
   effect:
     points: 1
-  scientific_symbol: wheel
+    scientific_symbol: wheel
 - id: 14
   name: Scriptorium
   color: green
   price:
     coins: 2
-  effect: null
-  scientific_symbol: feather
-  chain_out: book
+  effect:
+    chain_symbol: book
+    scientific_symbol: feather
 - id: 15
   name: Pharmacist
   color: green
   price:
     coins: 2
-  effect: null
-  scientific_symbol: mortar_and_pestle
-  chain_out: gear
+  effect:
+    chain_symbol: gear
+    scientific_symbol: mortar_and_pestle
 - id: 16
   name: Theater
   color: blue
   price: null
   effect:
     points: 3
-  chain_out: mask
+    chain_symbol: mask
 - id: 17
   name: Altar
   color: blue
   price: null
   effect:
     points: 3
-  chain_out: moon
+    chain_symbol: moon
 - id: 18
   name: Baths
   color: blue
@@ -134,7 +134,7 @@
     stone: 1
   effect:
     points: 3
-  chain_out: drop
+    chain_symbol: drop
 - id: 19
   name: Stone reserve
   color: yellow
@@ -162,7 +162,7 @@
   price: null
   effect:
     coins: 4
-  chain_out: vase
+    chain_symbol: vase
 - id: 23
   name: Sawmill
   color: brown
@@ -209,17 +209,17 @@
   price:
     wood: 1
     clay: 1
+    chain_symbol: horseshoe
   effect:
     shield: 1
-  chain_in: horseshoe
 - id: 30
   name: Barracks
   color: red
   price:
     coins: 3
+    chain_symbol: sword
   effect:
     shield: 1
-  chain_in: sword
 - id: 31
   name: Archery range
   color: red
@@ -229,7 +229,7 @@
     paper: 1
   effect:
     shield: 2
-  chain_out: target
+    chain_symbol: target
 - id: 32
   name: Parade ground
   color: red
@@ -238,7 +238,7 @@
     glass: 1
   effect:
     shield: 2
-  chain_out: helmet
+    chain_symbol: helmet
 - id: 33
   name: Library
   color: green
@@ -246,20 +246,20 @@
     wood: 1
     stone: 1
     glass: 1
+    chain_symbol: book
   effect:
     points: 2
-  scientific_symbol: feather
-  chain_in: book
+    scientific_symbol: feather
 - id: 34
   name: Dispensary
   color: green
   price:
     clay: 2
     stone: 1
+    chain_symbol: gear
   effect:
     points: 2
-  scientific_symbol: mortar_and_pestle
-  chain_in: gear
+    scientific_symbol: mortar_and_pestle
 - id: 35
   name: School
   color: green
@@ -268,8 +268,8 @@
     paper: 2
   effect:
     points: 1
-  scientific_symbol: wheel
-  chain_out: harp
+    chain_symbol: harp
+    scientific_symbol: wheel
 - id: 36
   name: Laboratory
   color: green
@@ -278,8 +278,8 @@
     glass: 2
   effect:
     points: 1
-  scientific_symbol: plumb
-  chain_out: teapot
+    chain_symbol: teapot
+    scientific_symbol: plumb
 - id: 37
   name: Courthouse
   color: blue
@@ -293,28 +293,28 @@
   color: blue
   price:
     clay: 2
+    chain_symbol: mask
   effect:
     points: 4
-  chain_in: mask
-  chain_out: column
+    chain_symbol: column
 - id: 39
   name: Temple
   color: blue
   price:
     wood: 1
     paper: 1
+    chain_symbol: moon
   effect:
     points: 4
-  chain_in: moon
-  chain_out: sun
+    chain_symbol: sun
 - id: 40
   name: Aqueduct
   color: blue
   price:
     stone: 3
+    chain_symbol: drop
   effect:
     points: 5
-  chain_in: drop
 - id: 41
   name: Rostrum
   color: blue
@@ -323,7 +323,7 @@
     stone: 1
   effect:
     points: 4
-  chain_out: temple
+    chain_symbol: temple
 - id: 42
   name: Forum
   color: yellow
@@ -355,7 +355,7 @@
   price: null
   effect:
     coins: 6
-  chain_out: barrel
+    chain_symbol: barrel
 - id: 46
   name: Arsenal
   color: red
@@ -378,27 +378,27 @@
     clay: 1
     stone: 2
     paper: 1
+    chain_symbol: tower
   effect:
     shield: 2
-  chain_in: tower
 - id: 49
   name: Siege workshop
   color: red
   price:
     wood: 3
     glass: 1
+    chain_symbol: target
   effect:
     shield: 2
-  chain_in: target
 - id: 50
   name: Circus
   color: red
   price:
     clay: 2
     stone: 2
+    chain_symbol: helmet
   effect:
     shield: 2
-  chain_in: helmet
 - id: 51
   name: Academy
   color: green
@@ -408,7 +408,7 @@
     glass: 2
   effect:
     points: 3
-  scientific_symbol: sundial
+    scientific_symbol: sundial
 - id: 52
   name: Study
   color: green
@@ -418,7 +418,7 @@
     paper: 1
   effect:
     points: 3
-  scientific_symbol: sundial
+    scientific_symbol: sundial
 - id: 53
   name: University
   color: green
@@ -426,20 +426,20 @@
     clay: 1
     glass: 1
     paper: 1
+    chain_symbol: harp
   effect:
     points: 2
-  scientific_symbol: armillary_sphere
-  chain_in: harp
+    scientific_symbol: armillary_sphere
 - id: 54
   name: Observatory
   color: green
   price:
     stone: 1
     paper: 2
+    chain_symbol: teapot
   effect:
     points: 2
-  scientific_symbol: armillary_sphere
-  chain_in: teapot
+    scientific_symbol: armillary_sphere
 - id: 55
   name: Palace
   color: blue
@@ -472,9 +472,9 @@
   price:
     wood: 2
     clay: 2
+    chain_symbol: column
   effect:
     points: 6
-  chain_in: column
 - id: 59
   name: Pantheon
   color: blue
@@ -482,9 +482,9 @@
     wood: 1
     clay: 1
     paper: 2
+    chain_symbol: sun
   effect:
     points: 6
-  chain_in: sun
 - id: 60
   name: Senate
   color: blue
@@ -492,9 +492,9 @@
     clay: 2
     stone: 1
     paper: 1
+    chain_symbol: temple
   effect:
     points: 5
-  chain_in: temple
 - id: 61
   name: Chamber of commerce
   color: yellow
@@ -528,10 +528,10 @@
   price:
     clay: 2
     glass: 1
+    chain_symbol: vase
   effect:
     points: 3
     yellow_coins: 1
-  chain_in: vase
 - id: 65
   name: Arena
   color: yellow
@@ -539,10 +539,10 @@
     wood: 1
     clay: 1
     stone: 1
+    chain_symbol: barrel
   effect:
     points: 3
     wonder_coins: 2
-  chain_in: barrel
 - id: 66
   name: Merchants guild
   color: purple

@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional
 import numpy as np
 
 from .price import Price
-from .bonuses import CoinsAndResources, InstantBonus, RESOURCES, BONUSES
+from .bonuses import InstantBonus, BONUSES
 
 
 @dataclass
@@ -28,7 +28,6 @@ class Wonder:
     def from_dict(description: Dict[str, Any]):
         if description["effect"] is None:
             description["effect"] = {}
-        price = CoinsAndResources({k: (description["price"] or {}).get(k, 0) for k in RESOURCES + ["coins"]})
         bonuses = np.zeros(len(BONUSES), dtype=int)
         instant_bonus = {}
         for effect_name, effect in description["effect"].items():
@@ -40,7 +39,7 @@ class Wonder:
                 raise ValueError
         return Wonder(description["id"],
                       description["name"],
-                      Price(price.coins, price.resources, -1),
+                      Price(description["price"]),
                       bonuses,
                       instant_bonus,
                       None)

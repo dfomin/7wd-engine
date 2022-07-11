@@ -9,8 +9,8 @@
   effect:
     economy: 1
 - name: law
-  effect: null
-  scientific_symbol: law
+  effect:
+    scientific_symbol: law
 - name: masonry
   effect:
     masonry: 1

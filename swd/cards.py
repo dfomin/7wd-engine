@@ -4,7 +4,7 @@ from typing import Dict, Any
 import numpy as np
 
 from .price import Price
-from .bonuses import CoinsAndResources, InstantBonus, RESOURCES, CHAIN_SYMBOLS, BONUSES
+from .bonuses import InstantBonus, BONUSES
 
 
 @dataclass
@@ -23,24 +23,20 @@ class Card:
     def from_dict(description: Dict[str, Any]):
         if description["effect"] is None:
             description["effect"] = {}
-        price = CoinsAndResources({k: (description["price"] or {}).get(k, 0) for k in RESOURCES + ["coins"]})
-        chain_in = CHAIN_SYMBOLS.index(description["chain_in"]) if "chain_in" in description else -1
         bonuses = np.zeros(len(BONUSES), dtype=int)
         instant_bonus = {}
         bonuses[BONUSES.index(description["color"])] += 1
-        if "chain_out" in description:
-            bonuses[BONUSES.index(description["chain_out"])] += 1
-        if "scientific_symbol" in description:
-            bonuses[BONUSES.index(description["scientific_symbol"])] += 1
         for effect_name, effect in description["effect"].items():
             if effect_name in BONUSES:
                 bonuses[BONUSES.index(effect_name)] = effect
             elif effect_name in map(lambda x: x.value, InstantBonus):
                 instant_bonus[InstantBonus(effect_name)] = effect
+            elif effect in BONUSES:
+                bonuses[BONUSES.index(effect)] = 1
             else:
                 raise ValueError
         return Card(description["id"],
                     description["name"],
-                    Price(price.coins, price.resources, chain_in),
+                    Price(description["price"]),
                     bonuses,
                     instant_bonus)

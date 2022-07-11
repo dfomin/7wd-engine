@@ -22,14 +22,14 @@ class ProgressToken:
             description["effect"] = {}
         bonuses = np.zeros(len(BONUSES), dtype=int)
         bonuses[BONUSES.index("progress_token")] += 1
-        if "scientific_symbol" in description:
-            bonuses[BONUSES.index(description["scientific_symbol"])] += 1
         instant_bonus = {}
         for effect_name, effect in description["effect"].items():
             if effect_name in BONUSES:
                 bonuses[BONUSES.index(effect_name)] = effect
             elif effect_name in map(lambda x: x.value, InstantBonus):
                 instant_bonus[InstantBonus(effect_name)] = effect
+            elif effect in BONUSES:
+                bonuses[BONUSES.index(effect)] = 1
         return ProgressToken(description["name"],
                              bonuses,
                              instant_bonus)

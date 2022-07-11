@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Dict
 
 import numpy as np
 
@@ -147,19 +146,3 @@ class InstantBonus(Enum):
     DESTROY_GRAY = "destroy_gray"
     SELECT_PROGRESS_TOKEN = "select_progress_token"
     SELECT_DISCARDED = "select_discarded"
-
-
-class CoinsAndResources:
-    coins: int
-    resources: np.ndarray
-
-    def __init__(self, description: Dict[str, int] = None):
-        if description is None:
-            description = {}
-        self.coins = description.get("coins", 0)
-        self.resources = np.zeros(len(RESOURCES), dtype=int)
-        for i, effect_name in enumerate(RESOURCES):
-            self.resources[i] = description.get(effect_name, 0)
-
-    def __repr__(self):
-        return f"{self.coins} " + " ".join(map(str, self.resources))
