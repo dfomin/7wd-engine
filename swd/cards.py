@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 import numpy as np
 
 from .price import Price
-from .bonuses import InstantBonus, BONUSES
+from .bonuses import BONUSES, INSTANT_BONUSES
 
 
 @dataclass
@@ -13,7 +13,7 @@ class Card:
     name: str
     price: Price
     bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))
-    instant_bonus: Dict[InstantBonus, int] = field(default_factory=dict)
+    instant_bonuses: List[int] = field(default_factory=list)
 
     @property
     def points(self) -> int:
@@ -24,13 +24,13 @@ class Card:
         if description["effect"] is None:
             description["effect"] = {}
         bonuses = np.zeros(len(BONUSES), dtype=int)
-        instant_bonus = {}
+        instant_bonuses = [0] * len(INSTANT_BONUSES)
         bonuses[BONUSES.index(description["color"])] += 1
         for effect_name, effect in description["effect"].items():
             if effect_name in BONUSES:
                 bonuses[BONUSES.index(effect_name)] = effect
-            elif effect_name in map(lambda x: x.value, InstantBonus):
-                instant_bonus[InstantBonus(effect_name)] = effect
+            elif effect_name in INSTANT_BONUSES:
+                instant_bonuses[INSTANT_BONUSES.index(effect_name)] = effect
             elif effect in BONUSES:
                 bonuses[BONUSES.index(effect)] = 1
             else:
@@ -39,4 +39,4 @@ class Card:
                     description["name"],
                     Price(description["price"]),
                     bonuses,
-                    instant_bonus)
+                    instant_bonuses)

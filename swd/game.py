@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional
 
 import numpy as np
 
@@ -10,8 +10,8 @@ from .cards import Card
 from .cards_board import CardsBoard
 from .military_track import MilitaryTrack
 from .player import Player
-from .bonuses import InstantBonus, POINTS_BONUS_RANGE, POINTS_BONUS, BONUSES, PLAYER_INVALIDATE_CACHE_RANGE, \
-    OPPONENT_INVALIDATE_CACHE_RANGE
+from .bonuses import POINTS_BONUS_RANGE, POINTS_BONUS, BONUSES, PLAYER_INVALIDATE_CACHE_RANGE, \
+    OPPONENT_INVALIDATE_CACHE_RANGE, INSTANT_BONUSES
 from .states.cards_board_state import CardsBoardState
 from .states.game_state import GameState, GameStatus
 from .states.military_state_track import MilitaryTrackState
@@ -190,7 +190,7 @@ class Game:
         elif isinstance(action, PickProgressTokenAction):
             token = EntityManager.progress_token(action.progress_token)
             Player.add_progress_token(player_state, token)
-            Game.apply_instant_bonus(state, player_state.index, token.instant_bonus, True)
+            Game.apply_instant_bonuses(state, player_state.index, token.instant_bonuses, True)
             if action.progress_token in state.progress_tokens:
                 state.progress_tokens.remove(action.progress_token)
             elif action.progress_token in state.rest_progress_tokens:
@@ -294,7 +294,7 @@ class Game:
     def add_card(state: GameState, player_state: PlayerState, card: Card):
         double_scientific_symbols = np.sum(Player.scientific_symbols(player_state) == 2)
         Player.add_card(player_state, card)
-        Game.apply_instant_bonus(state, player_state.index, card.instant_bonus, True)
+        Game.apply_instant_bonuses(state, player_state.index, card.instant_bonuses, True)
         if double_scientific_symbols != np.sum(Player.scientific_symbols(player_state) == 2):
             if len(state.progress_tokens) > 0:
                 state.game_status = GameStatus.PICK_PROGRESS_TOKEN
@@ -313,7 +313,7 @@ class Game:
         if opponent_state.bonuses[BONUSES.index("economy")] > 0:
             opponent_state.coins += (price - wonder.price.coins)
         Player.build_wonder(player_state, wonder_id, card_id)
-        Game.apply_instant_bonus(state, state.current_player_index, wonder.instant_bonus, False)
+        Game.apply_instant_bonuses(state, state.current_player_index, wonder.instant_bonuses, False)
 
         if len([x for x in player_state.wonders if x[1] is not None]) + \
                 len([x for x in opponent_state.wonders if x[1] is not None]) == 7:
@@ -323,55 +323,57 @@ class Game:
         Game.check_cache(state, wonder.bonuses, state.current_player_index)
 
     @staticmethod
-    def apply_instant_bonus(state: GameState, player_index: int, instant_bonus: Dict[InstantBonus, int], is_card: bool):
+    def apply_instant_bonuses(state: GameState, player_index: int, instant_bonuses: List[int], is_card: bool):
         player_state = state.players_state[player_index]
         opponent_state = state.players_state[1 - player_index]
-        for bonus, value in instant_bonus.items():
-            if bonus == InstantBonus.COINS:
+        for bonus, value in enumerate(instant_bonuses):
+            if value == 0:
+                continue
+            if bonus == INSTANT_BONUSES.index("coins"):
                 player_state.coins += value
-            elif bonus == InstantBonus.SHIELD:
+            elif bonus == INSTANT_BONUSES.index("shield"):
                 if is_card and player_state.bonuses[BONUSES.index("strategy")] > 0:
                     value += 1
                 MilitaryTrack.apply_shields(state.military_track_state,
                                             player_index,
                                             value,
                                             lambda x, y: Game.apply_military_tokens(state, x, y))
-            elif bonus == InstantBonus.BROWN_COINS:
+            elif bonus == INSTANT_BONUSES.index("brown_coins"):
                 player_state.coins += value * player_state.bonuses[BONUSES.index("brown")]
-            elif bonus == InstantBonus.GRAY_COINS:
+            elif bonus == INSTANT_BONUSES.index("gray_coins"):
                 player_state.coins += value * player_state.bonuses[BONUSES.index("gray")]
-            elif bonus == InstantBonus.RED_COINS:
+            elif bonus == INSTANT_BONUSES.index("red_coins"):
                 player_state.coins += value * player_state.bonuses[BONUSES.index("red")]
-            elif bonus == InstantBonus.YELLOW_COINS:
+            elif bonus == INSTANT_BONUSES.index("yellow_coins"):
                 player_state.coins += value * player_state.bonuses[BONUSES.index("yellow")]
-            elif bonus == InstantBonus.WONDER_COINS:
+            elif bonus == INSTANT_BONUSES.index("wonder_coins"):
                 player_state.coins += value * len([x for x in player_state.wonders if x[1] is not None])
-            elif bonus == InstantBonus.BLUE_MAX_COINS:
+            elif bonus == INSTANT_BONUSES.index("blue_max_coins"):
                 player_state.coins += value * max(x.bonuses[BONUSES.index("blue")] for x in state.players_state)
-            elif bonus == InstantBonus.BROWN_GRAY_MAX_COINS:
+            elif bonus == INSTANT_BONUSES.index("brown_gray_max_coins"):
                 player_state.coins += value * max(x.bonuses[BONUSES.index("brown")] +
                                                   x.bonuses[BONUSES.index("gray")]
                                                   for x in state.players_state)
-            elif bonus == InstantBonus.GREEN_MAX_COINS:
+            elif bonus == INSTANT_BONUSES.index("green_max_coins"):
                 player_state.coins += value * max(x.bonuses[BONUSES.index("green")] for x in state.players_state)
-            elif bonus == InstantBonus.RED_MAX_COINS:
+            elif bonus == INSTANT_BONUSES.index("red_max_coins"):
                 player_state.coins += value * max(x.bonuses[BONUSES.index("red")] for x in state.players_state)
-            elif bonus == InstantBonus.YELLOW_MAX_COINS:
+            elif bonus == INSTANT_BONUSES.index("yellow_max_coins"):
                 player_state.coins += value * max(x.bonuses[BONUSES.index("yellow")] for x in state.players_state)
-            elif bonus == InstantBonus.OPPONENT_COINS:
+            elif bonus == INSTANT_BONUSES.index("opponent_coins"):
                 opponent_state.coins = max(opponent_state.coins + value, 0)
-            elif bonus == InstantBonus.DOUBLE_TURN:
+            elif bonus == INSTANT_BONUSES.index("double_turn"):
                 state.is_double_turn = True
-            elif bonus == InstantBonus.DESTROY_BROWN:
+            elif bonus == INSTANT_BONUSES.index("destroy_brown"):
                 if opponent_state.bonuses[BONUSES.index("brown")] > 0:
                     state.game_status = GameStatus.DESTROY_BROWN
-            elif bonus == InstantBonus.DESTROY_GRAY:
+            elif bonus == INSTANT_BONUSES.index("destroy_gray"):
                 if opponent_state.bonuses[BONUSES.index("gray")] > 0:
                     state.game_status = GameStatus.DESTROY_GRAY
-            elif bonus == InstantBonus.SELECT_PROGRESS_TOKEN:
+            elif bonus == INSTANT_BONUSES.index("select_progress_token"):
                 np.random.shuffle(state.rest_progress_tokens)
                 state.game_status = GameStatus.PICK_REST_PROGRESS_TOKEN
-            elif bonus == InstantBonus.SELECT_DISCARDED:
+            elif bonus == INSTANT_BONUSES.index("select_discarded"):
                 if len(state.discard_pile) > 0:
                     state.game_status = GameStatus.SELECT_DISCARDED
 

@@ -127,22 +127,23 @@ PLAYER_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONU
 OPPONENT_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONUSES[x] in OPPONENT_INVALIDATE_CACHE_BONUSES])
 
 
-class InstantBonus(Enum):
-    COINS = "coins"
-    SHIELD = "shield"
-    BROWN_COINS = "brown_coins"
-    GRAY_COINS = "gray_coins"
-    RED_COINS = "red_coins"
-    YELLOW_COINS = "yellow_coins"
-    WONDER_COINS = "wonder_coins"
-    BLUE_MAX_COINS = "blue_max_coins"
-    BROWN_GRAY_MAX_COINS = "brown_gray_max_coins"
-    GREEN_MAX_COINS = "green_max_coins"
-    RED_MAX_COINS = "red_max_coins"
-    YELLOW_MAX_COINS = "yellow_max_coins"
-    OPPONENT_COINS = "opponent_coins"
-    DOUBLE_TURN = "double_turn"
-    DESTROY_BROWN = "destroy_brown"
-    DESTROY_GRAY = "destroy_gray"
-    SELECT_PROGRESS_TOKEN = "select_progress_token"
-    SELECT_DISCARDED = "select_discarded"
+INSTANT_BONUSES = [
+    "coins",
+    "shield",
+    "brown_coins",
+    "gray_coins",
+    "red_coins",
+    "yellow_coins",
+    "wonder_coins",
+    "blue_max_coins",
+    "brown_gray_max_coins",
+    "green_max_coins",
+    "red_max_coins",
+    "yellow_max_coins",
+    "opponent_coins",
+    "double_turn",
+    "destroy_brown",
+    "destroy_gray",
+    "select_progress_token",
+    "select_discarded"
+]
