@@ -1,3 +1,4 @@
+from typing import Dict, Any, Tuple
 from enum import Enum
 
 import numpy as np
@@ -147,3 +148,28 @@ INSTANT_BONUSES = [
     "select_progress_token",
     "select_discarded"
 ]
+
+
+class BonusManager:
+    @staticmethod
+    def from_dict(description: Dict[str, Any]) -> Tuple[Dict[int, int], Dict[int, int]]:
+        bonuses = {}
+        instant_bonuses = {}
+        for effect_name, effect in description.items():
+            if effect_name in BONUSES:
+                bonuses[BONUSES.index(effect_name)] = effect
+            elif effect_name in INSTANT_BONUSES:
+                instant_bonuses[INSTANT_BONUSES.index(effect_name)] = effect
+            elif effect in BONUSES:
+                bonuses[BONUSES.index(effect)] = 1
+            else:
+                raise ValueError
+        return bonuses, instant_bonuses
+
+    @staticmethod
+    def get_bonus(bonus: str, bonuses: Dict[int, int]) -> int:
+        return bonuses.get(BONUSES.index(bonus), 0)
+
+    @staticmethod
+    def get_instant_bonus(bonus: str, instant_bonuses: Dict[int, int]) -> int:
+        return instant_bonuses.get(INSTANT_BONUSES.index(bonus), 0)

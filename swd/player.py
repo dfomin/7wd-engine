@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 import numpy as np
 
@@ -6,8 +6,6 @@ from .assets import Assets
 from .cards import Card
 from .entity_manager import EntityManager
 from .progress_tokens import ProgressToken
-from .bonuses import BONUSES, RESOURCE_RANGE, GENERAL_RESOURCES_RANGE, TRADE_RESOURCES_RANGE, SCIENTIFIC_SYMBOLS_RANGE,\
-    CHAIN_SYMBOLS_RANGE
 from .states.player_state import PlayerState
 from .wonders import Wonder
 
@@ -31,39 +29,20 @@ class Player:
         return [EntityManager.progress_token(token_name) for token_name in state.progress_tokens]
 
     @staticmethod
-    def assets(state: PlayerState, opponents_resources: np.ndarray, card: Optional[Card]) -> Assets:
+    def assets(state: PlayerState, opponent_bonuses: Dict[int, int], card: Optional[Card]) -> Assets:
         resources = np.zeros(8, dtype=int)
-        resources[:5] = Player.resources(state)
-        resources[5:7] = Player.general_resources(state)
+        resources[:5] = np.array([state.bonuses.get(x, 0) for x in range(5)])
+        resources[5:7] = np.array([state.bonuses.get(x, 0) for x in range(5, 7)])
         if card is not None:
-            if card.bonuses[BONUSES.index("blue")] > 0:
-                resources[7] = 2 if state.bonuses[BONUSES.index("masonry")] > 0 else 0
+            resources[7] = 2 if state.has_masonry and card.is_blue else 0
         else:
-            resources[7] = 2 if state.bonuses[BONUSES.index("architecture")] > 0 else 0
-        opponents_resources += 2
-        opponents_resources[Player.trade_resources(state) > 0] = 1
-        urbanism = state.bonuses[BONUSES.index("urbanism")] > 0
-        return Assets(state.coins, resources, opponents_resources, Player.chain_symbols(state), urbanism)
-
-    @staticmethod
-    def resources(state: PlayerState) -> np.ndarray:
-        return state.bonuses[RESOURCE_RANGE]
-
-    @staticmethod
-    def general_resources(state: PlayerState) -> np.ndarray:
-        return state.bonuses[GENERAL_RESOURCES_RANGE]
-
-    @staticmethod
-    def trade_resources(state: PlayerState) -> np.ndarray:
-        return state.bonuses[TRADE_RESOURCES_RANGE]
-
-    @staticmethod
-    def scientific_symbols(state: PlayerState) -> np.ndarray:
-        return state.bonuses[SCIENTIFIC_SYMBOLS_RANGE]
-
-    @staticmethod
-    def chain_symbols(state: PlayerState) -> np.ndarray:
-        return state.bonuses[CHAIN_SYMBOLS_RANGE]
+            resources[7] = 2 if state.has_architecture else 0
+        opponents_resources = np.array([opponent_bonuses.get(x, 0) + 2 for x in range(5)])
+        for i in range(7, 12):
+            if state.bonuses.get(i, 0) > 0:
+                opponents_resources[i - 7] = 1
+        chain_symbols = np.ndarray([state.bonuses.get(x, 0) for x in range(12, 12 + 17)])
+        return Assets(state.coins, resources, opponents_resources, chain_symbols, state.has_urbanism)
 
     @staticmethod
     def add_card(state: PlayerState, card: Card):
@@ -101,8 +80,8 @@ class Player:
 
     @staticmethod
     def card_price(state: PlayerState, card: Card, opponent_state: PlayerState) -> int:
-        return Player.assets(state, Player.resources(opponent_state).copy(), card).coins_for_price(card.price)
+        return Player.assets(state, opponent_state.bonuses, card).coins_for_price(card.price)
 
     @staticmethod
     def wonder_price(state: PlayerState, wonder: Wonder, opponent_state: PlayerState) -> int:
-        return Player.assets(state, Player.resources(opponent_state).copy(), None).coins_for_price(wonder.price)
+        return Player.assets(state, opponent_state.bonuses, None).coins_for_price(wonder.price)

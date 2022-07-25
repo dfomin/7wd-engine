@@ -1,5 +1,5 @@
 import random
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import numpy as np
 
@@ -323,10 +323,10 @@ class Game:
         Game.check_cache(state, wonder.bonuses, state.current_player_index)
 
     @staticmethod
-    def apply_instant_bonuses(state: GameState, player_index: int, instant_bonuses: List[int], is_card: bool):
+    def apply_instant_bonuses(state: GameState, player_index: int, instant_bonuses: Dict[int, int], is_card: bool):
         player_state = state.players_state[player_index]
         opponent_state = state.players_state[1 - player_index]
-        for bonus, value in enumerate(instant_bonuses):
+        for bonus, value in instant_bonuses.items():
             if value == 0:
                 continue
             if bonus == INSTANT_BONUSES.index("coins"):
@@ -412,11 +412,11 @@ class Game:
         return price
 
     @staticmethod
-    def check_cache(state: GameState, bonuses: np.ndarray, player_index: int):
+    def check_cache(state: GameState, bonuses: Dict[int, int], player_index: int):
         if state.price_cache is None:
             return
 
-        if np.count_nonzero(bonuses[PLAYER_INVALIDATE_CACHE_RANGE]) > 0:
+        if any(key in bonuses for key in PLAYER_INVALIDATE_CACHE_RANGE):
             state.price_cache[player_index] = {}
-        if np.count_nonzero(bonuses[OPPONENT_INVALIDATE_CACHE_RANGE]) > 0:
+        if any(key in bonuses for key in OPPONENT_INVALIDATE_CACHE_RANGE):
             state.price_cache[1 - player_index] = {}

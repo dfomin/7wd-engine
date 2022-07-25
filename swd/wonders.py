@@ -1,45 +1,23 @@
-from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional
 
-import numpy as np
-
+from .entity import Entity
 from .price import Price
-from .bonuses import BONUSES, INSTANT_BONUSES
 
 
-@dataclass
-class Wonder:
-    id: int
-    name: str
+class Wonder(Entity):
     price: Price
-    bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))
-    instant_bonuses: List[int] = field(default_factory=list)
     card_id: Optional[int] = None
+
+    def __init__(self, description: Dict[str, Any]):
+        super().__init__(description)
+
+        self.price = Price(description["price"])
+        self.card_id = None
 
     @property
     def is_built(self):
         return self.card_id is not None
 
     @property
-    def points(self) -> int:
-        return self.bonuses[BONUSES.index("points")]
-
-    @staticmethod
-    def from_dict(description: Dict[str, Any]):
-        if description["effect"] is None:
-            description["effect"] = {}
-        bonuses = np.zeros(len(BONUSES), dtype=int)
-        instant_bonuses = [0] * len(INSTANT_BONUSES)
-        for effect_name, effect in description["effect"].items():
-            if effect_name in BONUSES:
-                bonuses[BONUSES.index(effect_name)] = effect
-            elif effect_name in INSTANT_BONUSES:
-                instant_bonuses[INSTANT_BONUSES.index(effect_name)] = effect
-            else:
-                raise ValueError
-        return Wonder(description["id"],
-                      description["name"],
-                      Price(description["price"]),
-                      bonuses,
-                      instant_bonuses,
-                      None)
+    def double_turn(self):
+        return self.has_bonus("double_turn")

@@ -1,42 +1,19 @@
-from dataclasses import dataclass, field
-from typing import Dict, Any, List
+from typing import Dict, Any
 
-import numpy as np
-
+from .entity import Entity
 from .price import Price
-from .bonuses import BONUSES, INSTANT_BONUSES
 
 
-@dataclass
-class Card:
-    id: int
-    name: str
+class Card(Entity):
     price: Price
-    bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))
-    instant_bonuses: List[int] = field(default_factory=list)
+
+    def __init__(self, description: Dict[str, Any]):
+        description["effect"]["color"] = description["color"]
+
+        super().__init__(description)
+
+        self.price = Price(description["price"])
 
     @property
-    def points(self) -> int:
-        return self.bonuses[BONUSES.index("points")]
-
-    @staticmethod
-    def from_dict(description: Dict[str, Any]):
-        if description["effect"] is None:
-            description["effect"] = {}
-        bonuses = np.zeros(len(BONUSES), dtype=int)
-        instant_bonuses = [0] * len(INSTANT_BONUSES)
-        bonuses[BONUSES.index(description["color"])] += 1
-        for effect_name, effect in description["effect"].items():
-            if effect_name in BONUSES:
-                bonuses[BONUSES.index(effect_name)] = effect
-            elif effect_name in INSTANT_BONUSES:
-                instant_bonuses[INSTANT_BONUSES.index(effect_name)] = effect
-            elif effect in BONUSES:
-                bonuses[BONUSES.index(effect)] = 1
-            else:
-                raise ValueError
-        return Card(description["id"],
-                    description["name"],
-                    Price(description["price"]),
-                    bonuses,
-                    instant_bonuses)
+    def is_blue(self) -> bool:
+        return self.has_bonus("blue")

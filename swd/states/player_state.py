@@ -1,9 +1,7 @@
 from dataclasses import dataclass, field
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 
-import numpy as np
-
-from ..bonuses import BONUSES
+from ..bonuses import BonusManager
 
 
 @dataclass
@@ -12,8 +10,20 @@ class PlayerState:
     coins: int = 7
     cards: List[int] = field(default_factory=list)
     wonders: List[Tuple[int, Optional[int]]] = field(default_factory=list)
-    progress_tokens: List[str] = field(default_factory=list)
-    bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))
+    progress_tokens: List[int] = field(default_factory=list)
+    bonuses: Dict[int, int] = field(default_factory=dict)
+
+    @property
+    def has_masonry(self) -> bool:
+        return BonusManager.has_bonus("masonry", self.bonuses)
+
+    @property
+    def has_architecture(self) -> bool:
+        return BonusManager.has_bonus("architecture", self.bonuses)
+
+    @property
+    def has_urbanism(self) -> bool:
+        return BonusManager.has_bonus("urbanism", self.bonuses)
 
     def clone(self) -> 'PlayerState':
         return PlayerState(self.index,

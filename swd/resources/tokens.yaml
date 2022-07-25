@@ -1,32 +1,42 @@
-- name: agriculture
+- id: 0
+  name: agriculture
   effect:
     coins: 6
     points: 4
-- name: architecture
+- id: 1
+  name: architecture
   effect:
     architecture: 1
-- name: economy
+- id: 2
+  name: economy
   effect:
     economy: 1
-- name: law
+- id: 3
+  name: law
   effect:
     scientific_symbol: law
-- name: masonry
+- id: 4
+  name: masonry
   effect:
     masonry: 1
-- name: mathematics
+- id: 5
+  name: mathematics
   effect:
     progress_tokens_points: 3
-- name: philosophy
+- id: 6
+  name: philosophy
   effect:
     points: 7
-- name: strategy
+- id: 7
+  name: strategy
   effect:
     strategy: 1
-- name: theology
+- id: 8
+  name: theology
   effect:
     theology: 1
-- name: urbanism
+- id: 9
+  name: urbanism
   effect:
     coins: 6
     urbanism: 4

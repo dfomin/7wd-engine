@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Dict
 
 import numpy as np
@@ -6,7 +5,6 @@ import numpy as np
 from swd.bonuses import RESOURCES, CHAIN_SYMBOLS
 
 
-@dataclass
 class Price:
     coins: int
     resources: np.ndarray
