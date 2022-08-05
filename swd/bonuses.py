@@ -173,3 +173,7 @@ class BonusManager:
     @staticmethod
     def get_instant_bonus(bonus: str, instant_bonuses: Dict[int, int]) -> int:
         return instant_bonuses.get(INSTANT_BONUSES.index(bonus), 0)
+
+    @staticmethod
+    def has_bonus(bonus: str, bonuses: Dict[int, int]) -> bool:
+        return bonuses.get(BONUSES.index(bonus), 0) > 0
