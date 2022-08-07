@@ -1,22 +1,23 @@
 from typing import Dict, Any, Optional
 
+from .cards import Card
 from .entity import Entity
 from .price import Price
 
 
 class Wonder(Entity):
     price: Price
-    card_id: Optional[int] = None
+    card: Optional[Card] = None
 
     def __init__(self, description: Dict[str, Any]):
         super().__init__(description)
 
         self.price = Price(description["price"])
-        self.card_id = None
+        self.card = None
 
     @property
     def is_built(self):
-        return self.card_id is not None
+        return self.card is not None
 
     @property
     def double_turn(self):

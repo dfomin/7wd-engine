@@ -1,7 +1,10 @@
-from typing import List, Tuple
+import random
+from typing import List, Tuple, Optional
 
 import numpy as np
 
+from .board_card import BoardCard
+from .cards import Card
 from .states.cards_board_state import CardsBoardState
 
 CLOSED_CARD = -1
@@ -13,6 +16,17 @@ For age mask
 0 - no card
 1 - closed card
 2 - open card
+"""
+
+
+"""
+....0.0....
+...X.X.X...
+..0.0.0.0..
+.X.X.X.X.X.
+0.0.0.0.0.0
+...........
+...........
 """
 
 AGES = np.array([
@@ -56,23 +70,27 @@ def card_to_string(card_id: int):
         return f"{card_id}"
 
 
-class OpeningCardsProvider:
-    @staticmethod
-    def get_card(pos: Tuple[int, int], state: CardsBoardState):
-        if state.preset is not None:
-            state.card_places[pos] = state.preset[state.age, pos[0], pos[1]]
-        elif state.card_places[pos] == CLOSED_CARD:
-            np.random.shuffle(state.card_ids)
-            state.card_places[pos] = state.card_ids[0]
-            state.card_ids = state.card_ids[1:]
-        elif state.card_places[pos] == CLOSED_PURPLE_CARD:
-            np.random.shuffle(state.purple_card_ids)
-            state.card_places[pos] = state.purple_card_ids[0]
-            state.purple_card_ids = state.purple_card_ids[1:]
-
-
 class CardsBoard:
-    state: CardsBoardState
+    card_places: List[List[BoardCard]]
+    cards: List[Card]
+    purple_cards: List[Card]
+    preset: Optional[List[List[List[BoardCard]]]]
+
+    def __init__(self):
+        self.card_places = []
+        self.cards = []
+        self.purple_cards = []
+        self.preset = None
+
+    def get_card(self, board_card: BoardCard, age: int):
+        if self.preset is not None:
+            return self.preset[age][board_card.row][board_card.column]
+        elif board_card.is_purple_back:
+            random.shuffle(self.purple_cards)
+            board_card.card = self.purple_cards.pop()
+        else:
+            random.shuffle(self.cards)
+            board_card.card = self.cards.pop()
 
     @staticmethod
     def print(state: CardsBoardState):
@@ -84,6 +102,67 @@ class CardsBoard:
             cards = state.card_places[row][mask[row] > 0]
             result += " ".join(map(lambda x: card_to_string(x), cards)) + "\n"
         return result
+
+    def generate_age_1(self):
+        self.cards = list(range(23))
+        for i in range(5):
+            row: List[BoardCard] = []
+            for j in range(i + 2):
+                board_card = BoardCard(i, j)
+                if i % 2 == 0:
+                    board_card.card = self.get_card(board_card, 0)
+                if i > 0:
+                    if j > 0:
+                        self.card_places[-1][j - 1].add_parent(board_card)
+                    if j < len(self.card_places[-1]):
+                        self.card_places[-1][j].add_parent(board_card)
+                row.append(board_card)
+            self.card_places.append(row)
+
+    def generate_age_2(self):
+        self.cards = list(range(23, 46))
+        for i in range(5):
+            row: List[BoardCard] = []
+            for j in range(6 - i):
+                board_card = BoardCard(i, j)
+                if i % 2 == 0:
+                    board_card.card = self.get_card(board_card, 1)
+                if i > 0:
+                    self.card_places[-1][j].add_parent(board_card)
+                    self.card_places[-1][j + 1].add_parent(board_card)
+                row.append(board_card)
+            self.card_places.append(row)
+
+    def generate_age_3(self):
+        self.cards = list(range(46, 66))
+        self.purple_cards = list(range(66, 73))
+        purple_indices = random.sample(range(20), k=3)
+        index = 0
+        for i in range(7):
+            row: List[BoardCard] = []
+            for j in range([2, 3, 4, 2, 4, 3, 2][i]):
+                board_card = BoardCard(i, j)
+                if index in purple_indices:
+                    board_card.is_purple_back = True
+                if i % 2 == 0:
+                    board_card.card = self.get_card(board_card, 2)
+                if i in [1, 2]:
+                    if j > 0:
+                        self.card_places[-1][j - 1].add_parent(board_card)
+                    if j < len(self.card_places[-1]):
+                        self.card_places[-1][j].add_parent(board_card)
+                elif i == 3:
+                    self.card_places[-1][2 * j].add_parent(board_card)
+                    self.card_places[-1][2 * j + 1].add_parent(board_card)
+                elif i == 4:
+                    self.card_places[-1][j // 2].add_parent(board_card)
+                    self.card_places[-1][j // 2].add_parent(board_card)
+                elif i > 4:
+                    self.card_places[-1][j].add_parent(board_card)
+                    self.card_places[-1][j + 1].add_parent(board_card)
+                row.append(board_card)
+                index += 1
+            self.card_places.append(row)
 
     @staticmethod
     def generate_age(state: CardsBoardState):
