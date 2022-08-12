@@ -1,9 +1,9 @@
 from swd.cards_board import CardsBoard
 
 
-def test_age_1():
+def test_cards_board_age_1():
     board = CardsBoard()
-    board.generate_age_1()
+    board.generate_age(0)
     assert len(board.card_places) == 5
     assert len(board.card_places[0]) == 2
     assert len(board.card_places[1]) == 3
@@ -12,9 +12,9 @@ def test_age_1():
     assert len(board.card_places[4]) == 6
 
 
-def test_age_2():
+def test_cards_board_age_2():
     board = CardsBoard()
-    board.generate_age_2()
+    board.generate_age(1)
     assert len(board.card_places) == 5
     assert len(board.card_places[0]) == 6
     assert len(board.card_places[1]) == 5
@@ -23,9 +23,9 @@ def test_age_2():
     assert len(board.card_places[4]) == 2
 
 
-def test_age_3():
+def test_cards_board_age_3():
     board = CardsBoard()
-    board.generate_age_3()
+    board.generate_age(2)
     assert len(board.card_places) == 7
     assert len(board.card_places[0]) == 2
     assert len(board.card_places[1]) == 3
@@ -41,3 +41,24 @@ def test_age_3():
             if board_card.is_purple_back:
                 purple_count += 1
     assert purple_count == 3
+
+
+def test_opening_cards_age_1():
+    board = CardsBoard()
+    board.generate_age(0)
+
+    assert len(board.available_cards()) == 6
+
+
+def test_opening_cards_age_2():
+    board = CardsBoard()
+    board.generate_age(1)
+
+    assert len(board.available_cards()) == 2
+
+
+def test_opening_cards_age_3():
+    board = CardsBoard()
+    board.generate_age(2)
+
+    assert len(board.available_cards()) == 2
