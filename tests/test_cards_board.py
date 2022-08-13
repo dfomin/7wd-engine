@@ -49,6 +49,14 @@ def test_opening_cards_age_1():
 
     assert len(board.available_cards()) == 6
 
+    board.take_card(board.available_cards()[0])
+
+    assert len(board.available_cards()) == 5
+
+    board.take_card(board.available_cards()[0])
+
+    assert len(board.available_cards()) == 5
+
 
 def test_opening_cards_age_2():
     board = CardsBoard()
@@ -56,9 +64,22 @@ def test_opening_cards_age_2():
 
     assert len(board.available_cards()) == 2
 
+    available_cards = board.available_cards()
+    board.take_card(available_cards[0])
+
+    assert len(board.available_cards()) == 2
+
+    board.take_card(available_cards[1])
+
+    assert len(board.available_cards()) == 3
+
 
 def test_opening_cards_age_3():
     board = CardsBoard()
     board.generate_age(2)
+
+    assert len(board.available_cards()) == 2
+
+    board.take_card(board.available_cards()[0])
 
     assert len(board.available_cards()) == 2

@@ -8,6 +8,7 @@ class BoardCard:
     column: int
     card: Optional[Card]
     is_purple_back: Optional[bool]
+    is_taken: bool
     parents: List['BoardCard']
     children: List['BoardCard']
 
@@ -16,6 +17,7 @@ class BoardCard:
         self.column = column
         self.card = None
         self.is_purple_back = False
+        self.is_taken = False
         self.parents = []
         self.children = []
 
@@ -25,8 +27,11 @@ class BoardCard:
 
     @property
     def is_available(self) -> bool:
-        return len(self.parents) == 0
+        return not self.is_taken and len(self.parents) == 0
 
     def add_parent(self, parent: 'BoardCard'):
         self.parents.append(parent)
         parent.children.append(self)
+
+    def remove_parent(self, parent: 'BoardCard'):
+        self.parents.remove(parent)

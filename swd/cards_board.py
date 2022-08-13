@@ -95,6 +95,13 @@ class CardsBoard:
     def available_cards(self) -> List[BoardCard]:
         return [card for row in self.card_places for card in row if card.is_available]
 
+    def take_card(self, board_card: BoardCard):
+        for child in board_card.children:
+            child.remove_parent(board_card)
+        board_card.children.clear()
+
+        self.card_places[board_card.row][board_card.column].is_taken = True
+
     @staticmethod
     def print(state: CardsBoardState):
         result = ""
