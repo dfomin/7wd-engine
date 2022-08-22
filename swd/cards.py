@@ -10,7 +10,7 @@ class Card(Entity):
     def __init__(self, description: Dict[str, Any]):
         description["effect"]["color"] = description["color"]
         if description["color"] == "blue":
-            description["effect"]["blue_points"] += description["effect"]["points"]
+            description["effect"]["blue_points"] = description["effect"]["points"]
 
         super().__init__(description)
 

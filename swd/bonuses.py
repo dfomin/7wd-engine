@@ -77,7 +77,7 @@ POINTS_BONUS = [
     "coins_max_points",
     "green_max_points",
     "red_max_points",
-    "wonders_max_points",
+    "wonder_max_points",
     "yellow_max_points",
     "progress_tokens_points"
 ]
@@ -132,7 +132,7 @@ INSTANT_BONUSES = [
     "gray_coins",
     "red_coins",
     "yellow_coins",
-    "wonders_coins",
+    "wonder_coins",
     "blue_max_coins",
     "brown_gray_max_coins",
     "green_max_coins",

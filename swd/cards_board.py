@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from .board_card import BoardCard
 from .cards import Card
+from .entity_manager import EntityManager
 
 CLOSED_CARD = -1
 CLOSED_PURPLE_CARD = -2
@@ -42,7 +43,7 @@ class CardsBoard:
     card_places: List[List[BoardCard]]
     cards: List[Card]
     purple_cards: List[Card]
-    preset: Optional[List[List[List[BoardCard]]]]
+    preset: Optional[List[List[List[Card]]]]
 
     def __init__(self):
         self.card_places = []
@@ -50,9 +51,9 @@ class CardsBoard:
         self.purple_cards = []
         self.preset = None
 
-    def get_card(self, board_card: BoardCard, age: int):
+    def assign_card(self, board_card: BoardCard, age: int):
         if self.preset is not None:
-            return self.preset[age][board_card.row][board_card.column]
+            board_card.card = self.preset[age][board_card.row][board_card.column]
         elif board_card.is_purple_back:
             random.shuffle(self.purple_cards)
             board_card.card = self.purple_cards.pop()
@@ -81,13 +82,13 @@ class CardsBoard:
             raise ValueError
 
     def _generate_age_1(self):
-        self.cards = list(range(23))
+        self.cards = [EntityManager.card(x) for x in range(23)]
         for i in range(5):
             row: List[BoardCard] = []
             for j in range(i + 2):
                 board_card = BoardCard(i, j)
                 if i % 2 == 0:
-                    board_card.card = self.get_card(board_card, 0)
+                    self.assign_card(board_card, 0)
                 if i > 0:
                     if j > 0:
                         self.card_places[-1][j - 1].add_parent(board_card)
@@ -97,13 +98,13 @@ class CardsBoard:
             self.card_places.append(row)
 
     def _generate_age_2(self):
-        self.cards = list(range(23, 46))
+        self.cards = [EntityManager.card(x) for x in range(23, 46)]
         for i in range(5):
             row: List[BoardCard] = []
             for j in range(6 - i):
                 board_card = BoardCard(i, j)
                 if i % 2 == 0:
-                    board_card.card = self.get_card(board_card, 1)
+                    self.assign_card(board_card, 1)
                 if i > 0:
                     self.card_places[-1][j].add_parent(board_card)
                     self.card_places[-1][j + 1].add_parent(board_card)
@@ -111,8 +112,8 @@ class CardsBoard:
             self.card_places.append(row)
 
     def _generate_age_3(self):
-        self.cards = list(range(46, 66))
-        self.purple_cards = list(range(66, 73))
+        self.cards = [EntityManager.card(x) for x in range(46, 66)]
+        self.purple_cards = [EntityManager.card(x) for x in range(66, 73)]
         purple_indices = random.sample(range(20), k=3)
         index = 0
         for i in range(7):
@@ -122,7 +123,7 @@ class CardsBoard:
                 if index in purple_indices:
                     board_card.is_purple_back = True
                 if i % 2 == 0:
-                    board_card.card = self.get_card(board_card, 2)
+                    self.assign_card(board_card, 2)
                 if i in [1, 2]:
                     if j > 0:
                         self.card_places[-1][j - 1].add_parent(board_card)

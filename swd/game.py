@@ -48,12 +48,12 @@ class Game:
         self.age = 0
         self.current_player_index = 0
 
-        tokens = list(range(EntityManager.progress_tokens_count()))
+        tokens = [EntityManager.progress_token(x) for x in range(EntityManager.progress_tokens_count())]
         random.shuffle(tokens)
         self.progress_tokens = tokens[:5]
         self.rest_progress_tokens = tokens[5:]
 
-        wonders = list(range(EntityManager.wonders_count()))
+        wonders = [EntityManager.wonder(x) for x in range(EntityManager.wonders_count())]
         random.shuffle(wonders)
         self.wonders = wonders[:8]
 
