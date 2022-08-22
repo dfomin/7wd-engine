@@ -10,6 +10,8 @@ class Wonder(Entity):
     card: Optional[Card] = None
 
     def __init__(self, description: Dict[str, Any]):
+        description["effect"]["wonders"] = 1
+
         super().__init__(description)
 
         self.price = Price(description["price"])

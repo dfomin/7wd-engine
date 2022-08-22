@@ -1,15 +1,12 @@
 from collections import defaultdict
-from typing import Optional, List, Dict, Tuple
+from typing import Optional, List, Dict
 
 import numpy as np
 
 from .assets import Assets
 from .bonuses import BonusManager
 from .cards import Card
-from .entity import Entity
-from .entity_manager import EntityManager
 from .progress_tokens import ProgressToken
-from .states.player_state import PlayerState
 from .wonders import Wonder
 
 
@@ -31,15 +28,78 @@ class Player:
 
     @property
     def has_masonry(self) -> bool:
-        return BonusManager.has_bonus("masonry", self.bonuses)
+        return self.has_progress_token("masonry")
 
     @property
     def has_architecture(self) -> bool:
-        return BonusManager.has_bonus("architecture", self.bonuses)
+        return self.has_progress_token("architecture")
 
     @property
     def has_urbanism(self) -> bool:
-        return BonusManager.has_bonus("urbanism", self.bonuses)
+        return self.has_progress_token("urbanism")
+
+    @property
+    def has_theology(self) -> bool:
+        return self.has_progress_token("theology")
+
+    @property
+    def has_economy(self) -> bool:
+        return self.has_progress_token("economy")
+
+    @property
+    def has_strategy(self) -> bool:
+        return self.has_progress_token("strategy")
+
+    @property
+    def scientific_symbols_count(self) -> int:
+        return BonusManager.scientific_bonuses_count(self.bonuses)
+
+    @property
+    def scientific_doubles_count(self) -> int:
+        return BonusManager.scientific_doubles_count(self.bonuses)
+
+    @property
+    def blue_cards(self) -> int:
+        return len([card for card in self.cards if card.is_blue])
+
+    @property
+    def brown_cards(self) -> int:
+        return len([card for card in self.cards if card.is_brown])
+
+    @property
+    def gray_cards(self) -> int:
+        return len([card for card in self.cards if card.is_gray])
+
+    @property
+    def yellow_cards(self) -> int:
+        return len([card for card in self.cards if card.is_yellow])
+
+    @property
+    def red_cards(self) -> int:
+        return len([card for card in self.cards if card.is_red])
+
+    @property
+    def green_cards(self) -> int:
+        return len([card for card in self.cards if card.is_green])
+
+    @property
+    def bonus_points(self) -> int:
+        return BonusManager.get_bonus("points", self.bonuses)
+
+    @property
+    def blue_points(self) -> int:
+        return BonusManager.get_bonus("blue_points", self.bonuses)
+
+    @property
+    def discard_bonus(self) -> int:
+        return 2 + BonusManager.get_bonus("yellow", self.bonuses)
+
+    @property
+    def built_wonders(self) -> int:
+        return len([wonder for wonder in self.wonders if wonder.is_built])
+
+    def has_progress_token(self, progress_token: str) -> bool:
+        return BonusManager.has_bonus(progress_token, self.bonuses)
 
     def assets(self, opponent_bonuses: Dict[int, int], card: Optional[Card]) -> Assets:
         resources = np.zeros(8, dtype=int)

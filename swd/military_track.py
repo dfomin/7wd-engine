@@ -1,4 +1,4 @@
-from typing import Callable, Optional, List
+from typing import Callable, Optional, List, Tuple
 
 
 class MilitaryTrack:
@@ -48,12 +48,11 @@ class MilitaryTrack:
             self.military_tokens[0] = False
             military_tokens_callback(0, -5)
 
-    def points(self, player_index: int) -> int:
-        if self.military_supremacist is not None:
-            return 0
-        if player_index == 0 and self.conflict_pawn <= 0 or player_index == 1 and self.conflict_pawn >= 0:
-            return 0
-        return [2, 5, 10][abs(self.conflict_pawn) // 3]
+    def points(self) -> Tuple[int, int]:
+        if self.military_supremacist is not None or self.conflict_pawn == 0:
+            return 0, 0
+        zone_points = [2, 5, 10][abs(self.conflict_pawn) // 3]
+        return (zone_points, 0) if self.conflict_pawn > 0 else (0, zone_points)
 
     def clone(self) -> 'MilitaryTrack':
         return MilitaryTrack(self.conflict_pawn,

@@ -3,20 +3,20 @@ from abc import ABC, abstractmethod
 from typing import Sequence, List
 
 from .action import Action
-from .states.game_state import GameState
+from .game import Game
 
 
 class Agent(ABC):
     @abstractmethod
-    def choose_action(self, state: GameState, possible_actions: Sequence[Action]) -> Action:
+    def choose_action(self, game: Game, possible_actions: Sequence[Action]) -> Action:
         raise NotImplementedError
 
-    def on_action_applied(self, action: Action, new_state: GameState):
+    def on_action_applied(self, action: Action, game: Game):
         pass
 
 
 class RandomAgent(Agent):
-    def choose_action(self, state: GameState, possible_actions: Sequence[Action]) -> Action:
+    def choose_action(self, game: Game, possible_actions: Sequence[Action]) -> Action:
         return random.choice(possible_actions)
 
 
@@ -27,12 +27,12 @@ class RecordedAgent(Agent):
         super().__init__()
         self.actions = actions
 
-    def choose_action(self, state: GameState, possible_actions: Sequence[Action]) -> Action:
+    def choose_action(self, game: Game, possible_actions: Sequence[Action]) -> Action:
         return self.actions.pop(0)
 
 
 class ConsoleAgent(Agent):
-    def choose_action(self, state: GameState, possible_actions: Sequence[Action]) -> Action:
+    def choose_action(self, game: Game, possible_actions: Sequence[Action]) -> Action:
         for i, action in enumerate(possible_actions):
             print(f"{i}: {action}")
         while True:

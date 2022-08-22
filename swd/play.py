@@ -3,13 +3,13 @@ from .game import Game
 
 
 def play():
-    state = Game.create()
+    game = Game()
     agent = ConsoleAgent()
-    while not Game.is_finished(state):
-        actions = Game.get_available_actions(state)
-        print(Game.print(state))
-        selected_action = agent.choose_action(state, actions)
-        Game.apply_action(state, selected_action)
+    while not game.is_finished:
+        actions = game.get_available_actions()
+        # print(game.print(state)
+        selected_action = agent.choose_action(game, actions)
+        game.apply_action(selected_action)
 
 
 if __name__ == "__main__":

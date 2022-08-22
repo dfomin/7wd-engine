@@ -1,5 +1,9 @@
 from dataclasses import dataclass
-from typing import Tuple
+
+from swd.board_card import BoardCard
+from swd.cards import Card
+from swd.progress_tokens import ProgressToken
+from swd.wonders import Wonder
 
 
 @dataclass
@@ -9,31 +13,36 @@ class Action:
 
 @dataclass
 class BuyCardAction(Action):
-    card_id: int
-    pos: Tuple[int, int]
+    board_card: BoardCard
+
+    @property
+    def card(self) -> Card:
+        return self.board_card.card
 
 
 @dataclass
 class DiscardCardAction(Action):
-    card_id: int
-    pos: Tuple[int, int]
+    board_card: BoardCard
+
+    @property
+    def card(self) -> Card:
+        return self.board_card.card
 
 
 @dataclass
 class DestroyCardAction(Action):
-    card_id: int
+    card: Card
 
 
 @dataclass
 class PickWonderAction(Action):
-    wonder_id: int
+    wonder: Wonder
 
 
 @dataclass
 class BuildWonderAction(Action):
-    wonder_id: int
-    card_id: int
-    pos: Tuple[int, int]
+    wonder: Wonder
+    board_card: BoardCard
 
 
 @dataclass
@@ -43,9 +52,9 @@ class PickStartPlayerAction(Action):
 
 @dataclass
 class PickProgressTokenAction(Action):
-    progress_token: str
+    progress_token: ProgressToken
 
 
 @dataclass
 class PickDiscardedCardAction(Action):
-    card_id: int
+    card: Card

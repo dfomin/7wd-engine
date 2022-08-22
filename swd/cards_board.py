@@ -1,11 +1,8 @@
 import random
-from typing import List, Tuple, Optional
-
-import numpy as np
+from typing import List, Optional
 
 from .board_card import BoardCard
 from .cards import Card
-from .states.cards_board_state import CardsBoardState
 
 CLOSED_CARD = -1
 CLOSED_PURPLE_CARD = -2
@@ -28,35 +25,6 @@ For age mask
 ...........
 ...........
 """
-
-AGES = np.array([
-    [
-        [2, 2, 0, 0, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [2, 2, 2, 2, 0, 0],
-        [1, 1, 1, 1, 1, 0],
-        [2, 2, 2, 2, 2, 2],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-    ],
-    [
-        [2, 2, 2, 2, 2, 2],
-        [0, 1, 1, 1, 1, 1],
-        [0, 0, 2, 2, 2, 2],
-        [0, 0, 0, 1, 1, 1],
-        [0, 0, 0, 0, 2, 2],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-    ],
-    [
-        [2, 2, 0, 0, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [2, 2, 2, 2, 0, 0],
-        [0, 1, 0, 1, 0, 0],
-        [0, 2, 2, 2, 2, 0],
-        [0, 0, 1, 1, 1, 0],
-        [0, 0, 0, 2, 2, 0],
-    ]], dtype=int)
 
 
 def card_to_string(card_id: int):
@@ -101,17 +69,6 @@ class CardsBoard:
         board_card.children.clear()
 
         self.card_places[board_card.row][board_card.column].is_taken = True
-
-    @staticmethod
-    def print(state: CardsBoardState):
-        result = ""
-        mask = AGES[state.age]
-        for row in range(len(state.card_places)):
-            if (mask[row] > 0).sum() == 0:
-                continue
-            cards = state.card_places[row][mask[row] > 0]
-            result += " ".join(map(lambda x: card_to_string(x), cards)) + "\n"
-        return result
 
     def generate_age(self, age: int):
         if age == 0:
@@ -183,7 +140,3 @@ class CardsBoard:
                 row.append(board_card)
                 index += 1
             self.card_places.append(row)
-
-    @staticmethod
-    def check_pos(state: CardsBoardState, pos: Tuple[int, int]):
-        return 0 <= pos[0] < state.card_places.shape[0] and 0 <= pos[1] < state.card_places.shape[1]
