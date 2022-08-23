@@ -35,3 +35,8 @@ class BoardCard:
 
     def remove_parent(self, parent: 'BoardCard'):
         self.parents.remove(parent)
+
+    def __str__(self) -> str:
+        if self.is_taken:
+            return "  "
+        return f"{self.card.id}" if self.card is not None else " ."

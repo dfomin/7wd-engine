@@ -67,6 +67,15 @@ class Game:
         self.meta_info = {}
         self.price_cache = None
 
+    def __str__(self) -> str:
+        result = ""
+        card_places = self.cards_board.card_places
+        max_row_length = max([len(x) for x in card_places]) if len(card_places) > 0 else 0
+        for row in card_places:
+            result += " " * 2 * (max_row_length - len(row))
+            result += "  ".join([f"{board_card}" for board_card in row]) + "\n"
+        return result
+
     @property
     def is_finished(self) -> bool:
         return self.game_status == GameStatus.FINISHED

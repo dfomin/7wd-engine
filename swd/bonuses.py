@@ -160,7 +160,6 @@ class BonusManager:
             elif effect in BONUSES:
                 bonuses[BONUSES.index(effect)] = 1
             else:
-                print(description, effect_name, effect)
                 raise ValueError
         return bonuses, instant_bonuses
 

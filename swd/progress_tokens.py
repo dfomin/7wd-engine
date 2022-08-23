@@ -8,3 +8,6 @@ class ProgressToken(Entity):
         description["effect"]["progress_tokens"] = 1
 
         super().__init__(description)
+
+    def __str__(self) -> str:
+        return f"{self.name}"

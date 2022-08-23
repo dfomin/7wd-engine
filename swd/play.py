@@ -7,7 +7,7 @@ def play():
     agent = ConsoleAgent()
     while not game.is_finished:
         actions = game.get_available_actions()
-        # print(game.print(state)
+        print(game)
         selected_action = agent.choose_action(game, actions)
         game.apply_action(selected_action)
 

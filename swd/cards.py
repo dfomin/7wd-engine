@@ -39,3 +39,6 @@ class Card(Entity):
     @property
     def is_green(self) -> bool:
         return self.has_bonus("green")
+
+    def __str__(self) -> str:
+        return f"{self.id} ({self.name})"

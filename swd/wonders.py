@@ -24,3 +24,6 @@ class Wonder(Entity):
     @property
     def double_turn(self):
         return self.has_bonus("double_turn")
+
+    def __str__(self) -> str:
+        return f"{self.name}"

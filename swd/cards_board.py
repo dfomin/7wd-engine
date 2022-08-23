@@ -44,12 +44,14 @@ class CardsBoard:
     cards: List[Card]
     purple_cards: List[Card]
     preset: Optional[List[List[List[Card]]]]
+    age: int
 
     def __init__(self):
         self.card_places = []
         self.cards = []
         self.purple_cards = []
         self.preset = None
+        self.age = 0
 
     def assign_card(self, board_card: BoardCard, age: int):
         if self.preset is not None:
@@ -67,16 +69,21 @@ class CardsBoard:
     def take_card(self, board_card: BoardCard):
         for child in board_card.children:
             child.remove_parent(board_card)
+            if child.is_available:
+                self.assign_card(child, self.age)
         board_card.children.clear()
 
         self.card_places[board_card.row][board_card.column].is_taken = True
 
     def generate_age(self, age: int):
         if age == 0:
+            self.age = age
             self._generate_age_1()
         elif age == 1:
+            self.age = age
             self._generate_age_2()
         elif age == 2:
+            self.age = age
             self._generate_age_3()
         else:
             raise ValueError
