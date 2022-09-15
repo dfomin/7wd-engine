@@ -12,7 +12,8 @@ class BoardCard:
     parents: List['BoardCard']
     children: List['BoardCard']
 
-    def __init__(self, row: int, column: int):
+    def __init__(self, age: int, row: int, column: int):
+        self.age = age
         self.row = row
         self.column = column
         self.card = None

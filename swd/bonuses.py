@@ -184,7 +184,7 @@ class BonusManager:
         return len([x for x in SCIENTIFIC_SYMBOLS if bonuses.get(BONUSES.index(x), 0) == 2])
 
     @staticmethod
-    def purple_bonus(bonuses_list: List[Dict[int, int]]) -> List[int]:
+    def purple_bonus(bonuses_list: List[Dict[int, int]], coins_list: List[int]) -> List[int]:
         purple_points = [0] * len(bonuses_list)
         purple_color_map = {
             "blue_max_points": ["blue"],
@@ -194,16 +194,17 @@ class BonusManager:
             "yellow_max_points": ["yellow"],
         }
         for bonus in POINTS_BONUS:
-            for i in range(len(bonuses_list)):
-                if bonus in purple_color_map:
-                    if bonus in bonuses_list[i]:
-                        if bonus in purple_color_map:
-                            for color in purple_color_map[bonus]:
-                                purple_points[i] += max([x[BONUSES.index(color)] for x in bonuses_list])
-                        elif bonus == "coins_max_points":
-                            purple_points[i] += max([bonuses[BONUSES.index("coins")] // 3 for bonuses in bonuses_list])
-                        elif bonus == "wonder_max_points":
-                            purple_points[i] += 2 * max([bonuses[BONUSES.index("wonders")] for bonuses in bonuses_list])
-                        else:
-                            raise ValueError
+            for i, bonuses in enumerate(bonuses_list):
+                if BonusManager.has_bonus(bonus, bonuses):
+                    if bonus in purple_color_map:
+                        purple_points[i] += max([sum(x[BONUSES.index(color)] for color in purple_color_map[bonus])
+                                                 for x in bonuses_list])
+                    elif bonus == "coins_max_points":
+                        purple_points[i] += max([coins // 3 for coins in coins_list])
+                    elif bonus == "wonder_max_points":
+                        purple_points[i] += 2 * max([bonuses[BONUSES.index("wonders")] for bonuses in bonuses_list])
+                    elif bonus == "progress_tokens_points":
+                        purple_points[i] += 3 * bonuses[BONUSES.index("progress_tokens")]
+                    else:
+                        raise ValueError
         return purple_points

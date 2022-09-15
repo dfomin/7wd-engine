@@ -101,7 +101,7 @@ class Game:
             return supremacist
 
         if self.age == 2 and len(self.cards_board.available_cards()) == 0:
-            (points_0, blue_points_0), points_1, blue_points_1 = self.points()
+            (points_0, blue_points_0), (points_1, blue_points_1) = self.points()
             if points_0 > points_1:
                 return 0
             elif points_0 < points_1:
@@ -132,7 +132,7 @@ class Game:
         elif self.game_status == GameStatus.PICK_PROGRESS_TOKEN:
             available_actions = [PickProgressTokenAction(x) for x in self.progress_tokens]
         elif self.game_status == GameStatus.PICK_REST_PROGRESS_TOKEN:
-            available_actions = [PickProgressTokenAction(x) for x in self.rest_progress_tokens[:3]]
+            available_actions = [PickProgressTokenAction(x) for x in self.rest_progress_tokens[:5]]
         elif self.game_status == GameStatus.DESTROY_BROWN:
             opponent = self.opponent
             for card in opponent.cards:
@@ -161,12 +161,12 @@ class Game:
         result: List[Action] = [DiscardCardAction(board_card) for board_card in board_cards]
         result.extend([BuyCardAction(board_card)
                        for board_card in board_cards
-                       if self.card_price(board_card.card, self.current_player_index) < player.coins])
+                       if self.card_price(board_card.card, self.current_player_index) <= player.coins])
 
         result.extend([BuildWonderAction(wonder, board_card)
                        for board_card in board_cards
                        for wonder in player.wonders
-                       if not wonder.is_built and self.wonder_price(wonder, self.current_player_index) < player.coins])
+                       if not wonder.is_built and self.wonder_price(wonder, self.current_player_index) <= player.coins])
 
         return result
 
@@ -251,9 +251,12 @@ class Game:
         points = [player.bonus_points for player in self.players]
         blue_points = [player.blue_points for player in self.players]
         military_points = self.military_track.points()
-        purple_points = BonusManager.purple_bonus([player.bonuses for player in self.players])
+        coin_points = [player.coins // 3 for player in self.players]
+        purple_points = BonusManager.purple_bonus([player.bonuses for player in self.players],
+                                                  [player.coins for player in self.players])
 
-        return [(points[i] + military_points[i] + purple_points[i], blue_points[i]) for i in range(len(self.players))]
+        return [(points[i] + military_points[i] + purple_points[i] + coin_points[i], blue_points[i])
+                for i in range(len(self.players))]
 
     def buy_card(self, card: Card):
         player = self.current_player

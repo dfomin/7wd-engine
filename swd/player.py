@@ -113,13 +113,12 @@ class Player:
         for i in range(7, 12):
             if self.bonuses.get(i, 0) > 0:
                 opponents_resources[i - 7] = 1
-        chain_symbols = np.ndarray([self.bonuses.get(x, 0) for x in range(12, 12 + 17)])
+        chain_symbols = np.array([self.bonuses.get(x, 0) for x in range(12, 12 + 17)])
         return Assets(self.coins, resources, opponents_resources, chain_symbols, self.has_urbanism)
 
     def add_bonuses(self, bonuses: Dict[int, int]):
         for bonus, value in bonuses.items():
-            if bonus in self.bonuses:
-                self.bonuses[bonus] += value
+            self.bonuses[bonus] += value
 
     def remove_bonuses(self, bonuses: Dict[int, int]):
         for bonus, value in bonuses.items():

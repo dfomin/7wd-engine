@@ -56,6 +56,10 @@ class BuildWonderAction(Action):
     wonder: Wonder
     board_card: BoardCard
 
+    @property
+    def card(self) -> Card:
+        return self.board_card.card
+
     def __str__(self) -> str:
         return f"Build {self.wonder} with {self.board_card.card}"
 
