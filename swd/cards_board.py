@@ -1,4 +1,5 @@
 import random
+from collections import defaultdict
 from typing import List, Optional
 
 from .board_card import BoardCard
@@ -146,3 +147,22 @@ class CardsBoard:
                 row.append(board_card)
                 index += 1
             self.card_places.append(row)
+
+    def clone(self) -> 'CardsBoard':
+        cards_board = CardsBoard()
+        cards_map = defaultdict(list)
+        for row in self.card_places:
+            new_row = []
+            for board_card in row:
+                new_card = board_card.clone()
+                new_row.append(new_card)
+                if new_card.card.id in cards_map:
+                    for child in cards_map[new_card.card.id]:
+                        child.add_parent(new_card)
+                for parent in board_card.parents:
+                    cards_map[parent.card.id].append(new_card)
+            cards_board.card_places.append(new_row)
+        cards_board.cards = [EntityManager.card(card.id) for card in self.cards]
+        cards_board.purple_cards = [EntityManager.card(card.id) for card in self.purple_cards]
+        cards_board.preset = self.preset
+        return cards_board

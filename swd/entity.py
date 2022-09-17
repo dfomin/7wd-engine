@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from swd.bonuses import BonusManager, BONUSES, INSTANT_BONUSES
+from swd.bonuses import BonusManager, BONUSES_INDEX, INSTANT_BONUSES_INDEX
 
 
 class Entity:
@@ -23,9 +23,9 @@ class Entity:
         return self.get_bonus(bonus) > 0
 
     def get_bonus(self, bonus: str) -> int:
-        if bonus in BONUSES:
+        if bonus in BONUSES_INDEX:
             return BonusManager.get_bonus(bonus, self.bonuses)
-        elif bonus in INSTANT_BONUSES:
+        elif bonus in INSTANT_BONUSES_INDEX:
             return BonusManager.get_instant_bonus(bonus, self.instant_bonuses)
         else:
             raise ValueError

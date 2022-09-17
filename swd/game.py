@@ -11,7 +11,7 @@ from .cards_board import CardsBoard
 from .military_track import MilitaryTrack
 from .player import Player
 from .bonuses import BONUSES, PLAYER_INVALIDATE_CACHE_RANGE, OPPONENT_INVALIDATE_CACHE_RANGE, INSTANT_BONUSES, \
-    BonusManager
+    BonusManager, BONUSES_INDEX, INSTANT_BONUSES_INDEX
 from .progress_tokens import ProgressToken
 from .wonders import Wonder
 
@@ -163,10 +163,15 @@ class Game:
                        for board_card in board_cards
                        if self.card_price(board_card.card, self.current_player_index) <= player.coins])
 
+        available_wonders = [
+            wonder
+            for wonder in player.wonders
+            if not wonder.is_built and self.wonder_price(wonder, self.current_player_index) <= player.coins
+        ]
+
         result.extend([BuildWonderAction(wonder, board_card)
                        for board_card in board_cards
-                       for wonder in player.wonders
-                       if not wonder.is_built and self.wonder_price(wonder, self.current_player_index) <= player.coins])
+                       for wonder in available_wonders])
 
         return result
 
@@ -271,12 +276,15 @@ class Game:
         self.add_card(player, card)
 
     def add_card(self, player: Player, card: Card):
-        scientific_doubles_count = player.scientific_doubles_count
+        scientific_doubles_count = None
+        if card.is_green:
+            scientific_doubles_count = player.scientific_doubles_count
         player.add_card(card)
         self.apply_instant_bonuses(player.index, card.instant_bonuses, True)
-        if scientific_doubles_count != player.scientific_doubles_count:
-            if len(self.progress_tokens) > 0:
-                self.game_status = GameStatus.PICK_PROGRESS_TOKEN
+        if card.is_green:
+            if scientific_doubles_count != player.scientific_doubles_count:
+                if len(self.progress_tokens) > 0:
+                    self.game_status = GameStatus.PICK_PROGRESS_TOKEN
 
         self.check_cache(card.bonuses, self.current_player_index)
 
@@ -304,46 +312,46 @@ class Game:
         for bonus, value in instant_bonuses.items():
             if value == 0:
                 continue
-            if bonus == INSTANT_BONUSES.index("coins"):
+            if bonus == INSTANT_BONUSES_INDEX["coins"]:
                 player.coins += value
-            elif bonus == INSTANT_BONUSES.index("shield"):
+            elif bonus == INSTANT_BONUSES_INDEX["shield"]:
                 if is_card and player.has_strategy:
                     value += 1
                 self.military_track.apply_shields(player_index, value, lambda x, y: self.apply_military_tokens(x, y))
-            elif bonus == INSTANT_BONUSES.index("brown_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["brown_coins"]:
                 player.coins += value * player.brown_cards
-            elif bonus == INSTANT_BONUSES.index("gray_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["gray_coins"]:
                 player.coins += value * player.gray_cards
-            elif bonus == INSTANT_BONUSES.index("red_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["red_coins"]:
                 player.coins += value * player.red_cards
-            elif bonus == INSTANT_BONUSES.index("yellow_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["yellow_coins"]:
                 player.coins += value * player.yellow_cards
-            elif bonus == INSTANT_BONUSES.index("wonder_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["wonder_coins"]:
                 player.coins += value * player.built_wonders
-            elif bonus == INSTANT_BONUSES.index("blue_max_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["blue_max_coins"]:
                 player.coins += value * max(x.blue_cards for x in self.players)
-            elif bonus == INSTANT_BONUSES.index("brown_gray_max_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["brown_gray_max_coins"]:
                 player.coins += value * max(x.brown_cards + x.gray_cards for x in self.players)
-            elif bonus == INSTANT_BONUSES.index("green_max_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["green_max_coins"]:
                 player.coins += value * max(x.green_cards for x in self.players)
-            elif bonus == INSTANT_BONUSES.index("red_max_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["red_max_coins"]:
                 player.coins += value * max(x.red_cards for x in self.players)
-            elif bonus == INSTANT_BONUSES.index("yellow_max_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["yellow_max_coins"]:
                 player.coins += value * max(x.yellow_cards for x in self.players)
-            elif bonus == INSTANT_BONUSES.index("opponent_coins"):
+            elif bonus == INSTANT_BONUSES_INDEX["opponent_coins"]:
                 opponent.coins = max(opponent.coins + value, 0)
-            elif bonus == INSTANT_BONUSES.index("double_turn"):
+            elif bonus == INSTANT_BONUSES_INDEX["double_turn"]:
                 self.is_double_turn = True
-            elif bonus == INSTANT_BONUSES.index("destroy_brown"):
-                if opponent.bonuses[BONUSES.index("brown")] > 0:
+            elif bonus == INSTANT_BONUSES_INDEX["destroy_brown"]:
+                if opponent.bonuses[BONUSES_INDEX["brown"]] > 0:
                     self.game_status = GameStatus.DESTROY_BROWN
-            elif bonus == INSTANT_BONUSES.index("destroy_gray"):
-                if opponent.bonuses[BONUSES.index("gray")] > 0:
+            elif bonus == INSTANT_BONUSES_INDEX["destroy_gray"]:
+                if opponent.bonuses[BONUSES_INDEX["gray"]] > 0:
                     self.game_status = GameStatus.DESTROY_GRAY
-            elif bonus == INSTANT_BONUSES.index("select_progress_token"):
+            elif bonus == INSTANT_BONUSES_INDEX["select_progress_token"]:
                 random.shuffle(self.rest_progress_tokens)
                 self.game_status = GameStatus.PICK_REST_PROGRESS_TOKEN
-            elif bonus == INSTANT_BONUSES.index("select_discarded"):
+            elif bonus == INSTANT_BONUSES_INDEX["select_discarded"]:
                 if len(self.discard_pile) > 0:
                     self.game_status = GameStatus.SELECT_DISCARDED
 
@@ -387,3 +395,20 @@ class Game:
             self.price_cache[player_index] = {}
         if any(key in bonuses for key in OPPONENT_INVALIDATE_CACHE_RANGE):
             self.price_cache[1 - player_index] = {}
+
+    def clone(self) -> 'Game':
+        game = Game()
+        game.age = self.age
+        game.current_player_index = self.current_player_index
+        game.progress_tokens = [EntityManager.progress_token(token.id) for token in self.progress_tokens]
+        game.rest_progress_tokens = [EntityManager.progress_token(token.id) for token in self.rest_progress_tokens]
+        game.discard_pile = self.discard_pile.copy()
+        game.is_double_turn = self.is_double_turn
+        game.wonders = [EntityManager.wonder(wonder.id) for wonder in self.wonders]
+        game.players = [player.clone() for player in self.players]
+        game.military_track = self.military_track.clone()
+        game.game_status = self.game_status
+        game.winner = self.winner
+        game.cards_board = self.cards_board.clone()
+        game.meta_info = self.meta_info
+        game.price_cache = self.price_cache.copy() if self.price_cache is not None else None

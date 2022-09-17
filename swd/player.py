@@ -4,8 +4,9 @@ from typing import Optional, List, Dict
 import numpy as np
 
 from .assets import Assets
-from .bonuses import BonusManager
+from .bonuses import BonusManager, RESOURCES_RANGE, GENERAL_RESOURCES_RANGE, CHAIN_SYMBOLS_RANGE
 from .cards import Card
+from .entity_manager import EntityManager
 from .progress_tokens import ProgressToken
 from .wonders import Wonder
 
@@ -103,8 +104,8 @@ class Player:
 
     def assets(self, opponent_bonuses: Dict[int, int], card: Optional[Card]) -> Assets:
         resources = np.zeros(8, dtype=int)
-        resources[:5] = np.array([self.bonuses.get(x, 0) for x in range(5)])
-        resources[5:7] = np.array([self.bonuses.get(x, 0) for x in range(5, 7)])
+        resources[:5] = np.array([self.bonuses.get(x, 0) for x in RESOURCES_RANGE])
+        resources[5:7] = np.array([self.bonuses.get(x, 0) for x in GENERAL_RESOURCES_RANGE])
         if card is not None:
             resources[7] = 2 if self.has_masonry and card.is_blue else 0
         else:
@@ -113,7 +114,7 @@ class Player:
         for i in range(7, 12):
             if self.bonuses.get(i, 0) > 0:
                 opponents_resources[i - 7] = 1
-        chain_symbols = np.array([self.bonuses.get(x, 0) for x in range(12, 12 + 17)])
+        chain_symbols = np.array([self.bonuses.get(x, 0) for x in CHAIN_SYMBOLS_RANGE])
         return Assets(self.coins, resources, opponents_resources, chain_symbols, self.has_urbanism)
 
     def add_bonuses(self, bonuses: Dict[int, int]):
@@ -154,3 +155,12 @@ class Player:
 
     def wonder_price(self, wonder: Wonder, opponent_bonuses: Dict[int, int]) -> int:
         return self.assets(opponent_bonuses, None).coins_for_price(wonder.price)
+
+    def clone(self) -> 'Player':
+        player = Player(self.index)
+        player.coins = self.coins
+        player.cards = [EntityManager.card(card.id) for card in self.cards]
+        player.wonders = [EntityManager.wonder(wonder.id) for wonder in self.wonders]
+        player.progress_tokens = [EntityManager.progress_token(token.id) for token in self.progress_tokens]
+        player.bonuses = self.bonuses.copy()
+        return player

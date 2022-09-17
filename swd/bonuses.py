@@ -1,5 +1,4 @@
 from typing import Dict, Any, Tuple, List
-from enum import Enum
 
 import numpy as np
 
@@ -118,9 +117,14 @@ def _generate_bonus_range(index: int):
     value = 0
     for i in range(index):
         value += len(BONUSES_LIST[i])
-    return np.arange(value, value + len(BONUSES_LIST[index]))
+    return range(value, value + len(BONUSES_LIST[index]))
 
 
+RESOURCES_RANGE = _generate_bonus_range(0)
+GENERAL_RESOURCES_RANGE = _generate_bonus_range(1)
+TRADE_RESOURCES_RANGE = _generate_bonus_range(2)
+CHAIN_SYMBOLS_RANGE = _generate_bonus_range(3)
+SCIENTIFIC_SYMBOLS_RANGE = _generate_bonus_range(4)
 PLAYER_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONUSES[x] in PLAYER_INVALIDATE_CACHE_BONUSES])
 OPPONENT_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONUSES[x] in OPPONENT_INVALIDATE_CACHE_BONUSES])
 
@@ -147,41 +151,45 @@ INSTANT_BONUSES = [
 ]
 
 
+BONUSES_INDEX = {bonus: index for index, bonus in enumerate(BONUSES)}
+INSTANT_BONUSES_INDEX = {bonus: index for index, bonus in enumerate(INSTANT_BONUSES)}
+
+
 class BonusManager:
     @staticmethod
     def from_dict(description: Dict[str, Any]) -> Tuple[Dict[int, int], Dict[int, int]]:
         bonuses = {}
         instant_bonuses = {}
         for effect_name, effect in description.items():
-            if effect_name in BONUSES:
-                bonuses[BONUSES.index(effect_name)] = effect
-            elif effect_name in INSTANT_BONUSES:
-                instant_bonuses[INSTANT_BONUSES.index(effect_name)] = effect
-            elif effect in BONUSES:
-                bonuses[BONUSES.index(effect)] = 1
+            if effect_name in BONUSES_INDEX:
+                bonuses[BONUSES_INDEX[effect_name]] = effect
+            elif effect_name in INSTANT_BONUSES_INDEX:
+                instant_bonuses[INSTANT_BONUSES_INDEX[effect_name]] = effect
+            elif effect in BONUSES_INDEX:
+                bonuses[BONUSES_INDEX[effect]] = 1
             else:
                 raise ValueError
         return bonuses, instant_bonuses
 
     @staticmethod
     def get_bonus(bonus: str, bonuses: Dict[int, int]) -> int:
-        return bonuses.get(BONUSES.index(bonus), 0)
+        return bonuses.get(BONUSES_INDEX[bonus], 0)
 
     @staticmethod
     def get_instant_bonus(bonus: str, instant_bonuses: Dict[int, int]) -> int:
-        return instant_bonuses.get(INSTANT_BONUSES.index(bonus), 0)
+        return instant_bonuses.get(INSTANT_BONUSES_INDEX[bonus], 0)
 
     @staticmethod
     def has_bonus(bonus: str, bonuses: Dict[int, int]) -> bool:
-        return bonuses.get(BONUSES.index(bonus), 0) > 0
+        return bonuses.get(BONUSES_INDEX[bonus], 0) > 0
 
     @staticmethod
     def scientific_bonuses_count(bonuses: Dict[int, int]) -> int:
-        return len([x for x in SCIENTIFIC_SYMBOLS if BONUSES.index(x) in bonuses])
+        return len([x for x in SCIENTIFIC_SYMBOLS if BONUSES_INDEX[x] in bonuses])
 
     @staticmethod
     def scientific_doubles_count(bonuses: Dict[int, int]) -> int:
-        return len([x for x in SCIENTIFIC_SYMBOLS if bonuses.get(BONUSES.index(x), 0) == 2])
+        return len([x for x in SCIENTIFIC_SYMBOLS if bonuses.get(BONUSES_INDEX[x], 0) == 2])
 
     @staticmethod
     def purple_bonus(bonuses_list: List[Dict[int, int]], coins_list: List[int]) -> List[int]:
@@ -197,14 +205,14 @@ class BonusManager:
             for i, bonuses in enumerate(bonuses_list):
                 if BonusManager.has_bonus(bonus, bonuses):
                     if bonus in purple_color_map:
-                        purple_points[i] += max([sum(x[BONUSES.index(color)] for color in purple_color_map[bonus])
+                        purple_points[i] += max([sum(x[BONUSES_INDEX[color]] for color in purple_color_map[bonus])
                                                  for x in bonuses_list])
                     elif bonus == "coins_max_points":
                         purple_points[i] += max([coins // 3 for coins in coins_list])
                     elif bonus == "wonder_max_points":
-                        purple_points[i] += 2 * max([bonuses[BONUSES.index("wonders")] for bonuses in bonuses_list])
+                        purple_points[i] += 2 * max([bonuses[BONUSES_INDEX["wonders"]] for bonuses in bonuses_list])
                     elif bonus == "progress_tokens_points":
-                        purple_points[i] += 3 * bonuses[BONUSES.index("progress_tokens")]
+                        purple_points[i] += 3 * bonuses[BONUSES_INDEX["progress_tokens"]]
                     else:
                         raise ValueError
         return purple_points

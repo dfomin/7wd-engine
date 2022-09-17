@@ -1,6 +1,7 @@
 from typing import Optional, List, Tuple
 
 from swd.cards import Card
+from swd.entity_manager import EntityManager
 
 
 class BoardCard:
@@ -40,4 +41,11 @@ class BoardCard:
     def __str__(self) -> str:
         if self.is_taken:
             return "  "
-        return f"{self.card.id}" if self.card is not None else " ."
+        return f"{self.card.id:2d}" if self.card is not None else " ."
+
+    def clone(self) -> 'BoardCard':
+        board_card = BoardCard(self.age, self.row, self.column)
+        board_card.card = EntityManager.card(self.card.id) if self.card is not None else None
+        board_card.is_purple_back = self.is_purple_back
+        board_card.is_taken = self.is_taken
+        return board_card
