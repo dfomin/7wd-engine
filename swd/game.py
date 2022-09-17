@@ -412,3 +412,4 @@ class Game:
         game.cards_board = self.cards_board.clone()
         game.meta_info = self.meta_info
         game.price_cache = self.price_cache.copy() if self.price_cache is not None else None
+        return game

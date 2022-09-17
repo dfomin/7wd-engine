@@ -68,7 +68,7 @@ class CardsBoard:
     def take_card(self, board_card: BoardCard):
         for child in board_card.children:
             child.remove_parent(board_card)
-            if child.is_available:
+            if child.is_available and child.card is None:
                 self.assign_card(child)
         board_card.children.clear()
 
@@ -150,18 +150,19 @@ class CardsBoard:
 
     def clone(self) -> 'CardsBoard':
         cards_board = CardsBoard()
-        cards_map = defaultdict(list)
         for row in self.card_places:
             new_row = []
             for board_card in row:
                 new_card = board_card.clone()
                 new_row.append(new_card)
-                if new_card.card.id in cards_map:
-                    for child in cards_map[new_card.card.id]:
-                        child.add_parent(new_card)
-                for parent in board_card.parents:
-                    cards_map[parent.card.id].append(new_card)
             cards_board.card_places.append(new_row)
+        for row_id in range(len(self.card_places)):
+            row = self.card_places[row_id]
+            new_row = cards_board.card_places[row_id]
+            for column_id in range(len(row)):
+                for parent in self.card_places[row_id][column_id].parents:
+                    index = self.card_places[row_id + 1].index(parent)
+                    new_row[column_id].add_parent(cards_board.card_places[row_id + 1][index])
         cards_board.cards = [EntityManager.card(card.id) for card in self.cards]
         cards_board.purple_cards = [EntityManager.card(card.id) for card in self.purple_cards]
         cards_board.preset = self.preset
