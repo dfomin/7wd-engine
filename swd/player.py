@@ -52,6 +52,10 @@ class Player:
         return self.has_progress_token("strategy")
 
     @property
+    def scientific_symbols(self) -> List[int]:
+        return BonusManager.scientific_bonuses(self.bonuses)
+
+    @property
     def scientific_symbols_count(self) -> int:
         return BonusManager.scientific_bonuses_count(self.bonuses)
 
@@ -133,7 +137,7 @@ class Player:
         self.add_bonuses(card.bonuses)
 
     def destroy_card(self, card: Card):
-        self.cards.remove(card)
+        self.cards = [x for x in self.cards if x.id != card.id]
         self.remove_bonuses(card.bonuses)
 
     def add_wonder(self, wonder: Wonder):

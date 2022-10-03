@@ -215,9 +215,9 @@ class Game:
         elif isinstance(action, PickProgressTokenAction):
             player.add_progress_token(action.progress_token)
             self.apply_instant_bonuses(self.current_player_index, action.progress_token.instant_bonuses, False)
-            if action.progress_token in self.progress_tokens:
+            if action.progress_token.id in [token.id for token in self.progress_tokens]:
                 self.progress_tokens.remove(action.progress_token)
-            elif action.progress_token in self.rest_progress_tokens:
+            elif action.progress_token.id in [token.id for token in self.rest_progress_tokens]:
                 self.rest_progress_tokens.remove(action.progress_token)
             else:
                 raise ValueError

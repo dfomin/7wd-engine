@@ -184,6 +184,10 @@ class BonusManager:
         return bonuses.get(BONUSES_INDEX[bonus], 0) > 0
 
     @staticmethod
+    def scientific_bonuses(bonuses: Dict[int, int]) -> List[int]:
+        return [bonuses.get(BONUSES_INDEX[x], 0) for x in SCIENTIFIC_SYMBOLS]
+
+    @staticmethod
     def scientific_bonuses_count(bonuses: Dict[int, int]) -> int:
         return len([x for x in SCIENTIFIC_SYMBOLS if BONUSES_INDEX[x] in bonuses])
 
