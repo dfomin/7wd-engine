@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from swd.board_card import BoardCard
 from swd.cards import Card
 from swd.progress_tokens import ProgressToken
 from swd.wonders import Wonder
@@ -13,26 +12,18 @@ class Action:
 
 @dataclass
 class BuyCardAction(Action):
-    board_card: BoardCard
-
-    @property
-    def card(self) -> Card:
-        return self.board_card.card
+    card: Card
 
     def __str__(self) -> str:
-        return f"Buy {self.board_card.card}"
+        return f"Buy {self.card}"
 
 
 @dataclass
 class DiscardCardAction(Action):
-    board_card: BoardCard
-
-    @property
-    def card(self) -> Card:
-        return self.board_card.card
+    card: Card
 
     def __str__(self) -> str:
-        return f"Discard {self.board_card.card}"
+        return f"Discard {self.card}"
 
 
 @dataclass
@@ -54,14 +45,10 @@ class PickWonderAction(Action):
 @dataclass
 class BuildWonderAction(Action):
     wonder: Wonder
-    board_card: BoardCard
-
-    @property
-    def card(self) -> Card:
-        return self.board_card.card
+    card: Card
 
     def __str__(self) -> str:
-        return f"Build {self.wonder} with {self.board_card.card}"
+        return f"Build {self.wonder} with {self.card}"
 
 
 @dataclass

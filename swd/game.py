@@ -2,7 +2,6 @@ import random
 from enum import Enum, auto
 from typing import List, Optional, Dict, Any, Tuple
 
-from .board_card import BoardCard
 from .entity_manager import EntityManager
 from .action import PickWonderAction, Action, PickStartPlayerAction, DiscardCardAction, BuyCardAction, \
     BuildWonderAction, PickProgressTokenAction, DestroyCardAction, PickDiscardedCardAction
@@ -10,8 +9,8 @@ from .cards import Card
 from .cards_board import CardsBoard
 from .military_track import MilitaryTrack
 from .player import Player
-from .bonuses import BONUSES, PLAYER_INVALIDATE_CACHE_RANGE, OPPONENT_INVALIDATE_CACHE_RANGE, INSTANT_BONUSES, \
-    BonusManager, BONUSES_INDEX, INSTANT_BONUSES_INDEX
+from .bonuses import PLAYER_INVALIDATE_CACHE_RANGE, OPPONENT_INVALIDATE_CACHE_RANGE, BonusManager, BONUSES_INDEX, \
+    INSTANT_BONUSES_INDEX
 from .progress_tokens import ProgressToken
 from .wonders import Wonder
 
@@ -158,8 +157,8 @@ class Game:
     def available_normal_actions(self) -> List[Action]:
         player = self.current_player
         board_cards = self.cards_board.available_cards()
-        result: List[Action] = [DiscardCardAction(board_card) for board_card in board_cards]
-        result.extend([BuyCardAction(board_card)
+        result: List[Action] = [DiscardCardAction(board_card.card) for board_card in board_cards]
+        result.extend([BuyCardAction(board_card.card)
                        for board_card in board_cards
                        if self.card_price(board_card.card, self.current_player_index) <= player.coins])
 
@@ -169,7 +168,7 @@ class Game:
             if not wonder.is_built and self.wonder_price(wonder, self.current_player_index) <= player.coins
         ]
 
-        result.extend([BuildWonderAction(wonder, board_card)
+        result.extend([BuildWonderAction(wonder, board_card.card)
                        for board_card in board_cards
                        for wonder in available_wonders])
 
@@ -179,10 +178,10 @@ class Game:
         player = self.current_player
         opponent = self.opponent
         if isinstance(action, BuyCardAction):
-            self.cards_board.take_card(action.board_card)
+            self.cards_board.take_card(action.card)
             self.buy_card(action.card)
         elif isinstance(action, DiscardCardAction):
-            self.cards_board.take_card(action.board_card)
+            self.cards_board.take_card(action.card)
             self.discard_pile.append(action.card)
             player.coins += player.discard_bonus
         elif isinstance(action, DestroyCardAction):
@@ -206,10 +205,10 @@ class Game:
                 player_index = [0, 1, 1, 0, 1, 0, 0, 1][8 - len(self.wonders)]
                 self.current_player_index = player_index
         elif isinstance(action, BuildWonderAction):
-            self.cards_board.take_card(action.board_card)
+            self.cards_board.take_card(action.card)
             if player.has_theology:
                 self.is_double_turn = True
-            self.build_wonder(action.wonder, action.board_card)
+            self.build_wonder(action.wonder, action.card)
         elif isinstance(action, PickStartPlayerAction):
             self.current_player_index = 1 - action.player_index        # will be changed to opposite later
             self.game_status = GameStatus.NORMAL_TURN
@@ -288,7 +287,7 @@ class Game:
 
         self.check_cache(card.bonuses, self.current_player_index)
 
-    def build_wonder(self, wonder: Wonder, board_card: BoardCard):
+    def build_wonder(self, wonder: Wonder, card: Card):
         player = self.current_player
         opponent = self.opponent
         price = self.wonder_price(wonder, self.current_player_index)
@@ -297,7 +296,7 @@ class Game:
         player.coins -= price
         if opponent.has_economy:
             opponent.coins += (price - wonder.price.coins)
-        player.build_wonder(wonder, board_card.card)
+        player.build_wonder(wonder, card)
         self.apply_instant_bonuses(self.current_player_index, wonder.instant_bonuses, False)
 
         if player.built_wonders + opponent.built_wonders == 7:

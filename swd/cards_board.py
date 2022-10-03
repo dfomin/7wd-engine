@@ -1,5 +1,4 @@
 import random
-from collections import defaultdict
 from typing import List, Optional
 
 from .board_card import BoardCard
@@ -65,7 +64,11 @@ class CardsBoard:
     def available_cards(self) -> List[BoardCard]:
         return [card for row in self.card_places for card in row if card.is_available]
 
-    def take_card(self, board_card: BoardCard):
+    def take_card(self, card: Card):
+        board_cards = [board_card for board_card in self.available_cards() if board_card.card.id == card.id]
+        if len(board_cards) != 1:
+            raise ValueError
+        board_card = board_cards[0]
         for child in board_card.children:
             child.remove_parent(board_card)
             if child.is_available and child.card is None:
