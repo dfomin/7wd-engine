@@ -216,9 +216,13 @@ class Game:
             player.add_progress_token(action.progress_token)
             self.apply_instant_bonuses(self.current_player_index, action.progress_token.instant_bonuses, False)
             if action.progress_token.id in [token.id for token in self.progress_tokens]:
-                self.progress_tokens.remove(action.progress_token)
+                self.progress_tokens = [token
+                                        for token in self.progress_tokens
+                                        if token.id != action.progress_token.id]
             elif action.progress_token.id in [token.id for token in self.rest_progress_tokens]:
-                self.rest_progress_tokens.remove(action.progress_token)
+                self.rest_progress_tokens = [token
+                                             for token in self.rest_progress_tokens
+                                             if token.id != action.progress_token.id]
             else:
                 raise ValueError
             self.check_cache(action.progress_token.bonuses, self.current_player_index)
@@ -390,9 +394,9 @@ class Game:
         if self.price_cache is None:
             return
 
-        if any(key in bonuses for key in PLAYER_INVALIDATE_CACHE_RANGE):
+        if any(key in PLAYER_INVALIDATE_CACHE_RANGE for key in bonuses):
             self.price_cache[player_index] = {}
-        if any(key in bonuses for key in OPPONENT_INVALIDATE_CACHE_RANGE):
+        if any(key in OPPONENT_INVALIDATE_CACHE_RANGE for key in bonuses):
             self.price_cache[1 - player_index] = {}
 
     def clone(self) -> 'Game':
