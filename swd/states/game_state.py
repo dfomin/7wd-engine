@@ -1,8 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum, auto
-from typing import List, Optional, Any, Dict, Tuple
-
-import numpy as np
+from typing import List, Optional, Any, Dict
 
 from .cards_board_state import CardsBoardState
 from .military_state_track import MilitaryTrackState
