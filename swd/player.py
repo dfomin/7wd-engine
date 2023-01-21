@@ -1,7 +1,5 @@
 from typing import Optional, List
 
-import numpy as np
-
 from .assets import Assets
 from .cards import Card
 from .entity_manager import EntityManager
@@ -34,7 +32,7 @@ class Player:
     def assets(state: PlayerState, opponents_resources: List[int], card: Optional[Card]) -> Assets:
         resources = list(Player.resources(state)) + list(Player.general_resources(state)) + [0]
         if card is not None:
-            if card.bonuses[BONUSES.index("blue")] > 0:
+            if BONUSES.index("blue") in card.bonuses:
                 resources[7] = 2 if state.bonuses[BONUSES.index("masonry")] > 0 else 0
         else:
             resources[7] = 2 if state.bonuses[BONUSES.index("architecture")] > 0 else 0
@@ -65,12 +63,14 @@ class Player:
     @staticmethod
     def add_card(state: PlayerState, card: Card):
         state.cards.append(card.id)
-        state.bonuses += card.bonuses
+        for bonus, value in card.bonuses.items():
+            state.bonuses[bonus] += value
 
     @staticmethod
     def destroy_card(state: PlayerState, card_id: int):
         state.cards.remove(card_id)
-        state.bonuses -= EntityManager.card(card_id).bonuses
+        for bonus, value in EntityManager.card(card_id).bonuses.items():
+            state.bonuses[bonus] -= value
 
     @staticmethod
     def add_wonder(state: PlayerState, wonder_id: int):
@@ -83,14 +83,16 @@ class Player:
                 if wonder[1] is not None:
                     raise ValueError
                 state.wonders[i] = wonder_id, card_id
-                state.bonuses += EntityManager.wonder(wonder_id).bonuses
+                for bonus, value in EntityManager.wonder(wonder_id).bonuses.items():
+                    state.bonuses[bonus] += value
                 return
         raise ValueError
 
     @staticmethod
     def add_progress_token(state: PlayerState, progress_token: ProgressToken):
         state.progress_tokens.append(progress_token.name)
-        state.bonuses += progress_token.bonuses
+        for bonus, value in progress_token.bonuses.items():
+            state.bonuses[bonus] += value
 
     @staticmethod
     def remove_unbuilt_wonders(state: PlayerState):

@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, Any, List
 
@@ -12,20 +13,20 @@ class Card:
     id: int
     name: str
     price: Price
-    bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))
+    bonuses: Dict[int, int] = field(default_factory=dict)
     instant_bonuses: List[int] = field(default_factory=list)
 
     @property
     def points(self) -> int:
-        return self.bonuses[BONUSES.index("points")]
+        return self.bonuses.get(BONUSES.index("points"), 0)
 
     @staticmethod
     def from_dict(description: Dict[str, Any]):
         if description["effect"] is None:
             description["effect"] = {}
-        bonuses = np.zeros(len(BONUSES), dtype=int)
+        bonuses = {}
         instant_bonuses = [0] * len(INSTANT_BONUSES)
-        bonuses[BONUSES.index(description["color"])] += 1
+        bonuses[BONUSES.index(description["color"])] = 1
         for effect_name, effect in description["effect"].items():
             if effect_name in BONUSES:
                 bonuses[BONUSES.index(effect_name)] = effect

@@ -1,5 +1,5 @@
 import random
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import numpy as np
 
@@ -108,12 +108,12 @@ class Game:
         elif state.game_status == GameStatus.DESTROY_BROWN:
             opponent_state = state.players_state[1 - state.current_player_index]
             for card in Player.cards(opponent_state):
-                if card.bonuses[BONUSES.index("brown")] > 0:
+                if BONUSES.index("brown") in card.bonuses:
                     available_actions.append(DestroyCardAction(card.id))
         elif state.game_status == GameStatus.DESTROY_GRAY:
             opponent_state = state.players_state[1 - state.current_player_index]
             for card in Player.cards(opponent_state):
-                if card.bonuses[BONUSES.index("gray")] > 0:
+                if BONUSES.index("gray") in card.bonuses:
                     available_actions.append(DestroyCardAction(card.id))
         elif state.game_status == GameStatus.SELECT_DISCARDED:
             available_actions = [PickDiscardedCardAction(x) for x in state.discard_pile]
@@ -242,23 +242,25 @@ class Game:
         player_tokens = [EntityManager.progress_token(name) for name in player_state.progress_tokens]
 
         cards = sum([card.points for card in player_cards])
-        blue_cards = sum([card.points for card in player_cards if card.bonuses[BONUSES.index("blue")] > 0])
+        blue_cards = sum([card.points for card in player_cards if BONUSES.index("blue") in card.bonuses])
         wonders = sum([wonder.points for wonder in player_wonders])
         tokens = sum([token.points for token in player_tokens])
         coins = player_state.coins // 3
         military = MilitaryTrack.points(state.military_track_state, player_index)
         bonus_points: int = 0
         bonus_color_map = {
-            POINTS_BONUS.index("blue_max_points"): ["blue"],
-            POINTS_BONUS.index("brown_gray_max_points"): ["brown", "gray"],
-            POINTS_BONUS.index("green_max_points"): ["green"],
-            POINTS_BONUS.index("red_max_points"): ["red"],
-            POINTS_BONUS.index("yellow_max_points"): ["yellow"],
+            BONUSES.index("blue_max_points"): ["blue"],
+            BONUSES.index("brown_gray_max_points"): ["brown", "gray"],
+            BONUSES.index("green_max_points"): ["green"],
+            BONUSES.index("red_max_points"): ["red"],
+            BONUSES.index("yellow_max_points"): ["yellow"],
         }
         for card in player_cards:
-            if card.bonuses[BONUSES.index("purple")] == 0:
+            if BONUSES.index("purple") not in card.bonuses:
                 continue
-            for bonus in np.where(card.bonuses[POINTS_BONUS_RANGE] > 0)[0]:
+            for bonus in card.bonuses:
+                if not (POINTS_BONUS_RANGE.start <= bonus < POINTS_BONUS_RANGE.stop):
+                    continue
                 if bonus in bonus_color_map:
                     colors = bonus_color_map[bonus]
                     own_cards_count = 0
@@ -267,9 +269,9 @@ class Game:
                         own_cards_count += player_state.bonuses[BONUSES.index(color)]
                         opponent_cards_count += opponent_state.bonuses[BONUSES.index(color)]
                     bonus_points += max(own_cards_count, opponent_cards_count)
-                elif bonus == POINTS_BONUS.index("coins_max_points"):
+                elif bonus == BONUSES.index("coins_max_points"):
                     bonus_points += max(player_state.coins // 3, opponent_state.coins // 3)
-                elif bonus == POINTS_BONUS.index("wonder_max_points"):
+                elif bonus == BONUSES.index("wonder_max_points"):
                     bonus_points += 2 * max(len(player_wonders), len(opponent_wonders))
                 else:
                     raise ValueError
@@ -292,10 +294,10 @@ class Game:
 
     @staticmethod
     def add_card(state: GameState, player_state: PlayerState, card: Card):
-        double_scientific_symbols = np.sum(Player.scientific_symbols(player_state) == 2)
+        double_scientific_symbols = sum(x == 2 for x in Player.scientific_symbols(player_state))
         Player.add_card(player_state, card)
         Game.apply_instant_bonuses(state, player_state.index, card.instant_bonuses, True)
-        if double_scientific_symbols != np.sum(Player.scientific_symbols(player_state) == 2):
+        if double_scientific_symbols != sum(x == 2 for x in Player.scientific_symbols(player_state)):
             if len(state.progress_tokens) > 0:
                 state.game_status = GameStatus.PICK_PROGRESS_TOKEN
 
@@ -412,11 +414,11 @@ class Game:
         return price
 
     @staticmethod
-    def check_cache(state: GameState, bonuses: np.ndarray, player_index: int):
+    def check_cache(state: GameState, bonuses: Dict[int, int], player_index: int):
         if state.price_cache is None:
             return
 
-        if np.count_nonzero(bonuses[PLAYER_INVALIDATE_CACHE_RANGE]) > 0:
+        if any(key in PLAYER_INVALIDATE_CACHE_RANGE for key in bonuses):
             state.price_cache[player_index] = {}
-        if np.count_nonzero(bonuses[OPPONENT_INVALIDATE_CACHE_RANGE]) > 0:
+        if any(key in OPPONENT_INVALIDATE_CACHE_RANGE for key in bonuses):
             state.price_cache[1 - player_index] = {}

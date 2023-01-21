@@ -145,6 +145,8 @@ class CardsBoard:
         state.available_cards = None
         index = np.where(state.card_places == card_id)
         if len(index[0]) != 1 or len(index[1]) != 1:
+            print(card_id, index)
+            print(state.card_places)
             raise ValueError
         pos = index[0][0], index[1][0]
         state.card_places[pos] = NO_CARD
