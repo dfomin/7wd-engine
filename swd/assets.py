@@ -1,17 +1,15 @@
 from dataclasses import dataclass
 from typing import List
 
-import numpy as np
-
 from .price import Price
 
 
 @dataclass
 class Assets:
     coins: int
-    resources: np.ndarray
-    resources_cost: np.ndarray
-    chain_symbols: np.ndarray
+    resources: List[int]
+    resources_cost: List[int]
+    chain_symbols: List[int]
     urbanism: bool
 
     def coins_for_price(self, price: Price) -> int:

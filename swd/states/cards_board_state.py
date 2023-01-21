@@ -11,7 +11,7 @@ class CardsBoardState:
     card_ids: np.ndarray
     purple_card_ids: np.ndarray
     preset: Optional[np.ndarray]
-    _available_cards: Optional[List[Tuple[int, Tuple[int, int]]]] = None
+    available_cards: Optional[List[Tuple[int, Tuple[int, int]]]] = None
 
     def clone(self) -> 'CardsBoardState':
         return CardsBoardState(self.age,

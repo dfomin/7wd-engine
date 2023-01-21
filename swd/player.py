@@ -31,38 +31,35 @@ class Player:
         return [EntityManager.progress_token(token_name) for token_name in state.progress_tokens]
 
     @staticmethod
-    def assets(state: PlayerState, opponents_resources: np.ndarray, card: Optional[Card]) -> Assets:
-        resources = np.zeros(8, dtype=int)
-        resources[:5] = Player.resources(state)
-        resources[5:7] = Player.general_resources(state)
+    def assets(state: PlayerState, opponents_resources: List[int], card: Optional[Card]) -> Assets:
+        resources = list(Player.resources(state)) + list(Player.general_resources(state)) + [0]
         if card is not None:
             if card.bonuses[BONUSES.index("blue")] > 0:
                 resources[7] = 2 if state.bonuses[BONUSES.index("masonry")] > 0 else 0
         else:
             resources[7] = 2 if state.bonuses[BONUSES.index("architecture")] > 0 else 0
-        opponents_resources += 2
-        opponents_resources[Player.trade_resources(state) > 0] = 1
+        opponents_resources = [1 if t else r + 2 for r, t in zip(opponents_resources, Player.trade_resources(state))]
         urbanism = state.bonuses[BONUSES.index("urbanism")] > 0
-        return Assets(state.coins, resources, opponents_resources, Player.chain_symbols(state), urbanism)
+        return Assets(state.coins, resources, opponents_resources, list(Player.chain_symbols(state)), urbanism)
 
     @staticmethod
-    def resources(state: PlayerState) -> np.ndarray:
+    def resources(state: PlayerState) -> List[int]:
         return state.bonuses[RESOURCE_RANGE]
 
     @staticmethod
-    def general_resources(state: PlayerState) -> np.ndarray:
+    def general_resources(state: PlayerState) -> List[int]:
         return state.bonuses[GENERAL_RESOURCES_RANGE]
 
     @staticmethod
-    def trade_resources(state: PlayerState) -> np.ndarray:
+    def trade_resources(state: PlayerState) -> List[int]:
         return state.bonuses[TRADE_RESOURCES_RANGE]
 
     @staticmethod
-    def scientific_symbols(state: PlayerState) -> np.ndarray:
+    def scientific_symbols(state: PlayerState) -> List[int]:
         return state.bonuses[SCIENTIFIC_SYMBOLS_RANGE]
 
     @staticmethod
-    def chain_symbols(state: PlayerState) -> np.ndarray:
+    def chain_symbols(state: PlayerState) -> List[int]:
         return state.bonuses[CHAIN_SYMBOLS_RANGE]
 
     @staticmethod
@@ -101,8 +98,8 @@ class Player:
 
     @staticmethod
     def card_price(state: PlayerState, card: Card, opponent_state: PlayerState) -> int:
-        return Player.assets(state, Player.resources(opponent_state).copy(), card).coins_for_price(card.price)
+        return Player.assets(state, Player.resources(opponent_state), card).coins_for_price(card.price)
 
     @staticmethod
     def wonder_price(state: PlayerState, wonder: Wonder, opponent_state: PlayerState) -> int:
-        return Player.assets(state, Player.resources(opponent_state).copy(), None).coins_for_price(wonder.price)
+        return Player.assets(state, Player.resources(opponent_state), None).coins_for_price(wonder.price)

@@ -87,7 +87,7 @@ class CardsBoard:
 
     @staticmethod
     def generate_age(state: CardsBoardState):
-        state._available_cards = None
+        state.available_cards = None
 
         mask = AGES[state.age]
         card_places = mask + NO_CARD
@@ -125,8 +125,8 @@ class CardsBoard:
 
     @staticmethod
     def available_cards(state: CardsBoardState) -> List[Tuple[int, Tuple[int, int]]]:
-        if state._available_cards is not None:
-            return state._available_cards
+        if state.available_cards is not None:
+            return state.available_cards
         result = []
         places = np.where(state.card_places >= 0)
         for pos in zip(places[0], places[1]):
@@ -137,12 +137,12 @@ class CardsBoard:
             elif state.card_places[pos[0] + 1, pos[1]] == NO_CARD:
                 if is_last_column or state.card_places[pos[0] + 1, pos[1] + 1] == NO_CARD:
                     result.append((state.card_places[tuple(pos)], tuple(pos)))
-        state._available_cards = result
+        state.available_cards = result
         return result
 
     @staticmethod
     def take_card(state: CardsBoardState, card_id: int):
-        state._available_cards = None
+        state.available_cards = None
         index = np.where(state.card_places == card_id)
         if len(index[0]) != 1 or len(index[1]) != 1:
             raise ValueError

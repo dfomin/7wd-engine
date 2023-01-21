@@ -111,7 +111,7 @@ def _generate_bonus_range(index: int):
     value = 0
     for i in range(index):
         value += len(BONUSES_LIST[i])
-    return np.arange(value, value + len(BONUSES_LIST[index]))
+    return slice(value, value + len(BONUSES_LIST[index]))
 
 
 RESOURCE_RANGE = _generate_bonus_range(0)

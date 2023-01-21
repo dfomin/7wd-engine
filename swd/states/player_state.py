@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Tuple, Optional
 
-import numpy as np
-
 from ..bonuses import BONUSES
 
 
@@ -13,7 +11,7 @@ class PlayerState:
     cards: List[int] = field(default_factory=list)
     wonders: List[Tuple[int, Optional[int]]] = field(default_factory=list)
     progress_tokens: List[str] = field(default_factory=list)
-    bonuses: np.ndarray = field(default_factory=lambda: np.zeros(len(BONUSES), dtype=int))
+    bonuses: List[int] = field(default_factory=lambda: [0] * len(BONUSES))
 
     def clone(self) -> 'PlayerState':
         return PlayerState(self.index,
