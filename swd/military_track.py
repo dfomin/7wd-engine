@@ -1,7 +1,5 @@
 from typing import Callable, Optional
 
-import numpy as np
-
 from .states.military_state_track import MilitaryTrackState
 
 
@@ -13,7 +11,7 @@ class MilitaryTrack:
                       military_tokens_callback: Callable[[int, int], None]):
         if player_index == 1:
             shields = -shields
-        state.conflict_pawn = np.clip(state.conflict_pawn + shields, -9, 9)
+        state.conflict_pawn = min(max(state.conflict_pawn + shields, -9), 9)
 
         if state.conflict_pawn >= 3 and state.military_tokens[2]:
             state.military_tokens[2] = False
