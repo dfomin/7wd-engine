@@ -1,6 +1,3 @@
-import numpy as np
-
-
 RESOURCES = [
     "wood",
     "clay",
@@ -121,8 +118,8 @@ POINTS_RANGE = _generate_bonus_range(5)
 POINTS_BONUS_RANGE = _generate_bonus_range(6)
 CARD_COLOR_RANGE = _generate_bonus_range(7)
 PROGRESS_TOKENS_RANGE = _generate_bonus_range(8)
-PLAYER_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONUSES[x] in PLAYER_INVALIDATE_CACHE_BONUSES])
-OPPONENT_INVALIDATE_CACHE_RANGE = np.array([x for x in range(len(BONUSES)) if BONUSES[x] in OPPONENT_INVALIDATE_CACHE_BONUSES])
+PLAYER_INVALIDATE_CACHE_RANGE = {x for x in range(len(BONUSES)) if BONUSES[x] in PLAYER_INVALIDATE_CACHE_BONUSES}
+OPPONENT_INVALIDATE_CACHE_RANGE = {x for x in range(len(BONUSES)) if BONUSES[x] in OPPONENT_INVALIDATE_CACHE_BONUSES}
 
 
 INSTANT_BONUSES = [

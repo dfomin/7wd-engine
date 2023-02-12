@@ -10,8 +10,8 @@ from .cards import Card
 from .cards_board import CardsBoard
 from .military_track import MilitaryTrack
 from .player import Player
-from .bonuses import POINTS_BONUS_RANGE, POINTS_BONUS, BONUSES, PLAYER_INVALIDATE_CACHE_RANGE, \
-    OPPONENT_INVALIDATE_CACHE_RANGE, INSTANT_BONUSES
+from .bonuses import POINTS_BONUS_RANGE, BONUSES, PLAYER_INVALIDATE_CACHE_RANGE, OPPONENT_INVALIDATE_CACHE_RANGE, \
+    INSTANT_BONUSES
 from .states.cards_board_state import CardsBoardState
 from .states.game_state import GameState, GameStatus
 from .states.military_state_track import MilitaryTrackState
@@ -89,7 +89,7 @@ class Game:
         state.game_status = GameStatus.FINISHED
 
     @staticmethod
-    def get_available_actions(state: GameState):
+    def get_available_actions(state: GameState) -> List[Action]:
         available_actions = []
 
         if state.game_status == GameStatus.PICK_WONDER:
