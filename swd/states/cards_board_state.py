@@ -1,16 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional, List, Tuple
 
-import numpy as np
-
 
 @dataclass
 class CardsBoardState:
     age: int
-    card_places: np.ndarray
-    card_ids: np.ndarray
-    purple_card_ids: np.ndarray
-    preset: Optional[np.ndarray]
+    card_places: List[List[int]]
+    card_ids: List[int]
+    purple_card_ids: List[int]
+    preset: Optional[List[List[List[int]]]]
     available_cards: Optional[List[Tuple[int, Tuple[int, int]]]] = None
 
     def clone(self) -> 'CardsBoardState':

@@ -1,8 +1,6 @@
 import random
 from typing import List, Optional, Dict
 
-import numpy as np
-
 from .entity_manager import EntityManager
 from .action import PickWonderAction, Action, PickStartPlayerAction, DiscardCardAction, BuyCardAction, \
     BuildWonderAction, PickProgressTokenAction, DestroyCardAction, PickDiscardedCardAction
@@ -22,7 +20,7 @@ from .wonders import Wonder
 class Game:
     @staticmethod
     def create() -> GameState:
-        wonders = [EntityManager.wonders_count()]
+        wonders = list(range(EntityManager.wonders_count()))
         random.shuffle(wonders)
         wonders = [x for x in wonders[:8]]
 
@@ -42,7 +40,7 @@ class Game:
                          MilitaryTrackState(),
                          GameStatus.PICK_WONDER,
                          None,
-                         CardsBoardState(0, np.array([]), np.array([]), np.array([]), None),
+                         CardsBoardState(0, [], [], [], None),
                          {})
 
     @staticmethod
