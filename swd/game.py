@@ -22,8 +22,8 @@ from .wonders import Wonder
 class Game:
     @staticmethod
     def create() -> GameState:
-        wonders = np.arange(12)
-        np.random.shuffle(wonders)
+        wonders = [EntityManager.wonders_count()]
+        random.shuffle(wonders)
         wonders = [x for x in wonders[:8]]
 
         tokens = EntityManager.progress_token_names()
@@ -64,7 +64,7 @@ class Game:
         if state.game_status != GameStatus.NORMAL_TURN and state.game_status != GameStatus.FINISHED:
             return None
         for i, player_state in enumerate(state.players_state):
-            if np.count_nonzero(Player.scientific_symbols(player_state)) >= 6:
+            if sum(1 for x in Player.scientific_symbols(player_state) if x > 0) >= 6:
                 return i
         supremacist = MilitaryTrack.military_supremacist(state.military_track_state)
         if supremacist is not None:
@@ -373,7 +373,7 @@ class Game:
                 if opponent_state.bonuses[BONUSES.index("gray")] > 0:
                     state.game_status = GameStatus.DESTROY_GRAY
             elif bonus == INSTANT_BONUSES.index("select_progress_token"):
-                np.random.shuffle(state.rest_progress_tokens)
+                random.shuffle(state.rest_progress_tokens)
                 state.game_status = GameStatus.PICK_REST_PROGRESS_TOKEN
             elif bonus == INSTANT_BONUSES.index("select_discarded"):
                 if len(state.discard_pile) > 0:
