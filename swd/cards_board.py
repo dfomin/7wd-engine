@@ -63,12 +63,10 @@ class OpeningCardsProvider:
             state.card_places[pos[0]][pos[1]] = state.preset[state.age][pos[0]][pos[1]]
         elif state.card_places[pos[0]][pos[1]] == CLOSED_CARD:
             random.shuffle(state.card_ids)
-            state.card_places[pos[0]][pos[1]] = state.card_ids[0]
-            state.card_ids = state.card_ids[1:]
+            state.card_places[pos[0]][pos[1]] = state.card_ids.pop(0)
         elif state.card_places[pos[0]][pos[1]] == CLOSED_PURPLE_CARD:
             random.shuffle(state.purple_card_ids)
-            state.card_places[pos[0]][pos[1]] = state.purple_card_ids[0]
-            state.purple_card_ids = state.purple_card_ids[1:]
+            state.card_places[pos[0]][pos[1]] = state.purple_card_ids.pop(0)
 
 
 class CardsBoard:
@@ -124,7 +122,7 @@ class CardsBoard:
                   if mask[i][j] == 2]
 
         for pos in places:
-            OpeningCardsProvider.get_card(tuple(pos), state)
+            OpeningCardsProvider.get_card(pos, state)
 
         if state.preset is not None:
             places = [(i, j)
@@ -133,7 +131,6 @@ class CardsBoard:
                       if mask[i][j] == 1]
 
             for pos in places:
-                pos = tuple(pos)
                 if state.card_places[pos[0]][pos[1]] == CLOSED_CARD and state.preset[state.age][pos[0]][pos[1]] >= 66:
                     state.card_places[pos[0]][pos[1]] = CLOSED_PURPLE_CARD
 

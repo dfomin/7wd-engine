@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Optional, List, Tuple
 
@@ -13,8 +14,8 @@ class CardsBoardState:
 
     def clone(self) -> 'CardsBoardState':
         return CardsBoardState(self.age,
-                               self.card_places.copy(),
+                               deepcopy(self.card_places),
                                self.card_ids.copy(),
                                self.purple_card_ids.copy(),
-                               self.preset.copy() if self.preset is not None else None,
+                               deepcopy(self.preset) if self.preset is not None else None,
                                None)
